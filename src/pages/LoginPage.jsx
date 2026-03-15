@@ -10,12 +10,11 @@ const LoginPage = () => {
     const navigate = useNavigate();
 
     const handleLogin = () => {
-        // שימוש ב-GET ובנתיב /login כפי שהוגדר ב-Backend החדש
         axios.get("http://localhost:8080/login", {
             params: { username, password, selectedType }
         }).then(response => {
             if (response.data.success) {
-                // שמירה ב-Cookies כפי שביקש האחראי
+                // שמירה ב-Cookies
                 Cookies.set('token', response.data.token);
                 navigate("/dashboard");
             } else {

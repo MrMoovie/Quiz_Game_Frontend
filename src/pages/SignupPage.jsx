@@ -13,7 +13,6 @@ const SignupPage = () => {
     const navigate = useNavigate();
 
     const handleSignup = () => {
-        // התאמה ל-Backend החדש: GET ופרמטרים תואמים
         axios.get("http://localhost:8080/signup", {
             params: {
                 username: formData.username,
