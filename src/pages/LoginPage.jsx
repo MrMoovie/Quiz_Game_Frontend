@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
@@ -8,6 +8,14 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [selectedType, setSelectedType] = useState(1); // 1 = Student, 2 = Teacher
     const navigate = useNavigate();
+
+    // ALTER THIS
+    useEffect(() => {
+        const token = Cookies.get("token");
+        if (token != null) {
+            navigate("/menu")
+        }
+    }, [navigate])
 
     const handleLogin = () => {
         axios.get("http://localhost:8080/login", {

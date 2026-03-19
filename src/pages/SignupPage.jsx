@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
@@ -11,6 +11,13 @@ const SignupPage = () => {
         selectedType: 1
     });
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = Cookies.get("token");
+        if (token != null) {
+            navigate("/menu")
+        }
+    }, [navigate])
 
     const handleSignup = () => {
         axios.get("http://localhost:8080/signup", {

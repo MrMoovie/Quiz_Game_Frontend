@@ -1,7 +1,4 @@
 // if teacher -> TeacherGamePage else -> StudentGamePage
-
-// if teacher -> TeacherMenuPage else -> StudentMenuPage
-
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import Cookies from "js-cookie";
@@ -10,8 +7,14 @@ import {HOST} from "./Constants.js";
 import TeacherGamePage from "./pages/TeacherGamePage.jsx";
 import StudentGamePage from "./pages/StudentGamePage.jsx";
 
+const USER_TYPES={
+    NONE:0,
+    STUDENT:1,
+    TEACHER:2
+}
+
 function GameWrapper(){
-    const [userType, setUserType] = useState(0)
+    const [userType, setUserType] = useState(USER_TYPES.NONE)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -24,13 +27,13 @@ function GameWrapper(){
                     setUserType(response.data.userType)
                 })
         }
-    },[navigate]);
+    },[navigate, userType]);
 
-    if(userType === 1){
+    if(userType === USER_TYPES.STUDENT){
         return (
             <StudentGamePage/>
         )
-    }else if(userType===2){
+    }else if(userType===USER_TYPES.TEACHER){
         return(
             <TeacherGamePage/>
         )

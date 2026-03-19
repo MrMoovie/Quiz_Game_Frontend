@@ -8,8 +8,14 @@ import {HOST} from "./Constants.js";
 import StudentMenuPage from "./pages/StudentMenuPage.jsx";
 import TeacherMenuPage from "./pages/TeacherMenuPage.jsx";
 
+const USER_TYPES={
+    NONE:0,
+    STUDENT:1,
+    TEACHER:2
+}
+
 function MenuWrapper(){
-    const [userType, setUserType] = useState(0)
+    const [userType, setUserType] = useState(USER_TYPES.NONE)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -24,11 +30,11 @@ function MenuWrapper(){
         }
     },[navigate]);
 
-    if(userType === 1){
+    if(userType === USER_TYPES.STUDENT){
         return (
             <StudentMenuPage/>
         )
-    }else if(userType===2){
+    }else if(userType===USER_TYPES.TEACHER){
         return(
             <TeacherMenuPage/>
         )
