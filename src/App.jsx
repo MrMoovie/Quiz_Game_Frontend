@@ -1,5 +1,5 @@
 import LoginPage from './pages/LoginPage.jsx'
-import RegisterPage from './pages/RegisterPage.jsx'
+import SignupPage from './pages/SignupPage.jsx'
 import MenuWrapper from './MenuWrapper.jsx'
 import GameWrapper from './GameWrapper.jsx'
 import './App.css'
@@ -10,7 +10,7 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route path={"/"} element={<LoginPage />}/>
-                <Route path={"/register"} element={<RegisterPage />}/>
+                <Route path={"/register"} element={<SignupPage />}/>
                 <Route path={"/menu"} element={<MenuWrapper />}/>
                 <Route path={"/game"} element={<GameWrapper />}/>
             </Routes>
