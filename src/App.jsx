@@ -1,26 +1,21 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
+import LoginPage from './pages/LoginPage.jsx'
+import RegisterPage from './pages/RegisterPage.jsx'
+import MenuWrapper from './MenuWrapper.jsx'
+import GameWrapper from './GameWrapper.jsx'
 import './App.css'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
     return (
-        <Router>
-            <div className="App">
-                <h1>Quiz Game Project</h1>
-                <Routes>
-                    {/* דף הבית יהיה הלוגין */}
-                    <Route path="/" element={<LoginPage />} />
-
-                    {/* נתיב להרשמה */}
-                    <Route path="/signup" element={<SignupPage />} />
-
-                    {/* נתיב ל-Dashboard (אחרי התחברות מוצלחת) */}
-                    <Route path="/dashboard" element={<div>בwelcome to the game (Dashboard)</div>} />
-                </Routes>
-            </div>
-        </Router>
-    );
+        <BrowserRouter>
+            <Routes>
+                <Route path={"/"} element={<LoginPage />}/>
+                <Route path={"/register"} element={<RegisterPage />}/>
+                <Route path={"/menu"} element={<MenuWrapper />}/>
+                <Route path={"/game"} element={<GameWrapper />}/>
+            </Routes>
+        </BrowserRouter>
+    )
 }
 
-export default App;
+export default App
