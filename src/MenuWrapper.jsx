@@ -16,6 +16,7 @@ const USER_TYPES={
 
 function MenuWrapper(){
     const [userType, setUserType] = useState(USER_TYPES.NONE)
+    const [userData, setUserData] = useState(null);  //שמירת פרטי המשתמש
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -26,17 +27,18 @@ function MenuWrapper(){
             axios.get(HOST + "get-user-type", {params:{token}})
                 .then((response) =>{
                     setUserType(response.data.userType)
+                    setUserData(response.data.user_info);  // מחזיר פרטי משתמש
                 })
         }
     },[navigate]);
 
     if(userType === USER_TYPES.STUDENT){
         return (
-            <StudentMenuPage/>
+            <StudentMenuPage user={userData}/>
         )
     }else if(userType===USER_TYPES.TEACHER){
         return(
-            <TeacherMenuPage/>
+            <TeacherMenuPage user={userData}/>
         )
     }else{
         return(

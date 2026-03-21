@@ -4,12 +4,18 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {HOST} from "../Constants.js";
 
-function StudentMenuPage() {
+function StudentMenuPage({ user }) {
     const navigate = useNavigate()
-    const [races, setRaces] = useState([{}])
+    const [races, setRaces] = useState([])
     const [isStarted, setStarted] = useState(false)
 
     const eventSourceRef = useRef(null)
+
+    // התנתקות
+    const handleLogout = () => {
+        Cookies.remove("token");
+        navigate("/"); //  חזרה לדף הכניסה
+    };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const getRaces = () => {
@@ -41,6 +47,12 @@ function StudentMenuPage() {
         };
     }, [getRaces, navigate])
 
+    useEffect(() => {
+        if (isStarted) {
+            navigate("/game");
+        }
+    }, [isStarted, navigate]);
+
     const handleJoin = (raceId) => {
         const token = Cookies.get("token")
         //add here the axios request
@@ -62,6 +74,12 @@ function StudentMenuPage() {
 
     return (
         <>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
+
+                <span> wellcome{user?.fullName} (student)</span>
+                <button onClick={handleLogout}>התנתק</button>
+            </div>
+
             <div>
                 STUDENT_MENU_PAGE
             </div>

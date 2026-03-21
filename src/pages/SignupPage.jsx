@@ -31,7 +31,7 @@ const SignupPage = () => {
             if (response.data.success) {
                 Cookies.set("token", response.data.token);
                 alert("נרשמת בהצלחה!");
-                navigate("/dashboard");
+                navigate("/menu"); // /מעבר לתפריט
             } else {
                 alert("הרשמה נכשלה: " + response.data.errorCode);
             }

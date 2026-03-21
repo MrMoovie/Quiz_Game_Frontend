@@ -4,11 +4,16 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {HOST} from "../Constants.js";
 
-function TeacherMenuPage() {
+function TeacherMenuPage({user}) {
     const navigate = useNavigate()
     const [students, setStudents] = useState([])
 
     const eventSourceRef = useRef(null)
+
+    const handleLogout = () => {//התנתקות
+        Cookies.remove("token");
+        navigate("/");
+    };
 
     const handleCreate = () =>{
         const token = Cookies.get("token")
@@ -35,9 +40,14 @@ function TeacherMenuPage() {
         eventSourceRef.current = listener
     }
 
-    // const handleStart = () =>{
-    //
-    // }
+    const handleStart = () => {
+        const token = Cookies.get("token");
+        axios.get(HOST + "start-race", { params: { token } })
+            .then(() => {
+                navigate("/game");
+            })
+            .catch(err => console.error("Failed to start race", err));
+    }
 
     useEffect(() => {
         //add maintaining connection...
@@ -58,6 +68,11 @@ function TeacherMenuPage() {
 
     return (
         <>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
+                <span> hello{user?.fullName} (teacher)</span>
+                <button onClick={handleLogout}>התנתק</button>
+            </div>
+
             <div>
                 TEACHER_MENU_PAGE
             </div>
@@ -65,7 +80,12 @@ function TeacherMenuPage() {
             <button onClick={()=>{handleCreate()}}>
                 Create Race
             </button>
-
+            {/* כפתור התחלה (רק אם יש כבר סטודנטים)*/}
+            {students.length > 0 && (
+                <button onClick={handleStart} style={{ backgroundColor: 'green', color: 'white', marginLeft: '10px' }}>
+                    Start Race!
+                </button>
+            )}
 
             <div>
                 <h1>Students List</h1>

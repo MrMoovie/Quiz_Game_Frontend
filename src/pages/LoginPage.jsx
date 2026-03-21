@@ -24,7 +24,7 @@ const LoginPage = () => {
             if (response.data.success) {
                 // שמירה ב-Cookies
                 Cookies.set('token', response.data.token);
-                navigate("/dashboard");
+                navigate("/menu");
             } else {
                 alert("התחברות נכשלה: " + (response.data.errorCode || "פרטים שגויים"));
             }
