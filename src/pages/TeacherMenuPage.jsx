@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import Cookies from "js-cookie";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
@@ -8,13 +8,20 @@ function TeacherMenuPage() {
     const navigate = useNavigate()
     const [students, setStudents] = useState([])
 
+    const eventSourceRef = useRef(null)
+
     const handleCreate = () =>{
         const token = Cookies.get("token")
-        const listener = new EventSource(HOST + "/subscribe?token=" + token);
-
         axios.get(HOST+"create-race", {params:{token}})
             .then((res)=>{console.log(res)})
 
+        if(!eventSourceRef.current) {
+            listen(token)
+        }
+
+    }
+    const listen = (token) =>{
+        const listener = new EventSource(HOST + "subscribe?token=" + token);
         listener.addEventListener("lobby-update", (event) => {
             const student = JSON.parse(event.data);
             const studentDetails = {
@@ -25,16 +32,28 @@ function TeacherMenuPage() {
             console.log(student)
         });
 
-        return () => {
-            listener.close();
-        };
+        eventSourceRef.current = listener
     }
 
+    // const handleStart = () =>{
+    //
+    // }
+
     useEffect(() => {
+        //add maintaining connection...
+
         const token = Cookies.get("token");
         if (!token) {
             navigate("/")
         }
+
+        return () => {
+            if (eventSourceRef.current) {
+                console.log("Closing SSE connection...");
+                eventSourceRef.current.close();
+                eventSourceRef.current = null;
+            }
+        };
     },[navigate])
 
     return (
