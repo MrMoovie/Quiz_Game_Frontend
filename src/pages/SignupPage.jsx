@@ -20,6 +20,15 @@ const SignupPage = () => {
     }, [navigate])
 
     const handleSignup = () => {
+        //validation
+        if (formData.password.length < 6) {
+            alert("Password must be at least 6 characters long!");
+            return; // לעצור את הפונקציה ולא לשלוח לשרת
+        }
+        if (!formData.fullName.includes(" ")) {
+            alert("Please enter your full name (First and Last name)");
+            return;
+        }
         axios.get("http://localhost:8080/signup", {
             params: {
                 username: formData.username,
