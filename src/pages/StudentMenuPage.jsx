@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {HOST} from "../Constants.js";
 
-function StudentMenuPage({ user }) {
+function StudentMenuPage({user}) {
     const navigate = useNavigate()
     const [races, setRaces] = useState([])
     const [isStarted, setStarted] = useState(false)
@@ -34,6 +34,9 @@ function StudentMenuPage({ user }) {
         const token = Cookies.get("token");
         if (!token) {
             navigate("/")
+            // }else if(){
+            //    //is in race?
+            //
         } else {
             getRaces()
         }
@@ -45,7 +48,7 @@ function StudentMenuPage({ user }) {
                 eventSourceRef.current = null;
             }
         };
-    }, [getRaces, navigate])
+    }, [navigate])
 
     useEffect(() => {
         if (isStarted) {
@@ -53,10 +56,17 @@ function StudentMenuPage({ user }) {
         }
     }, [isStarted, navigate]);
 
-    const handleJoin = (raceId) => {
+    const handleJoin = (entryCode) => {
         const token = Cookies.get("token")
-        //add here the axios request
 
+        axios.get('http://localhost:8080/join-race', {
+            params: {
+                token,
+                entryCode
+            }
+        }).then(res => {
+            console.log(res)
+        })
         if (!eventSourceRef.current) {
             listen(token)
         }
@@ -74,7 +84,7 @@ function StudentMenuPage({ user }) {
 
     return (
         <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
+            <div style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
 
                 <span> wellcome{user?.fullName} (student)</span>
                 <button onClick={handleLogout}>התנתק</button>
@@ -92,7 +102,7 @@ function StudentMenuPage({ user }) {
 
                             {/* Option 1: Print specific fields */}
                             Race ID: {race.id} | Entry Code: {race.entryCode} | Status: {race.status}
-
+                            <button onClick={() => handleJoin(race.entryCode)}> join race</button>
                             {/* Option 2: Print the raw JSON object for debugging */}
                             {/* {JSON.stringify(race)} */}
 
