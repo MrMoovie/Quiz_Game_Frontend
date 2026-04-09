@@ -7,6 +7,7 @@ const SignupPage = () => {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
+        confirmPassword: '',
         fullName: '',
         selectedType: 1
     });
@@ -24,6 +25,10 @@ const SignupPage = () => {
         if (formData.password.length < 6) {
             alert("Password must be at least 6 characters long!");
             return; // לעצור את הפונקציה ולא לשלוח לשרת
+        }
+        if (formData.password !== formData.confirmPassword) {
+            alert("Passwords do not match!");
+            return;
         }
         if (!formData.fullName.includes(" ")) {
             alert("Please enter your full name (First and Last name)");
@@ -60,6 +65,7 @@ const SignupPage = () => {
             <input type="text" placeholder="Full Name" onChange={(e) => setFormData({...formData, fullName: e.target.value})} style={{ width: '100%', marginBottom: '10px' }} />
             <input type="text" placeholder="Username" onChange={(e) => setFormData({...formData, username: e.target.value})} style={{ width: '100%', marginBottom: '10px' }} />
             <input type="password" placeholder="Password" onChange={(e) => setFormData({...formData, password: e.target.value})} style={{ width: '100%', marginBottom: '10px' }} />
+            <input type="password" placeholder="Confirm Password" onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})} style={{ width: '100%', marginBottom: '10px' }} />
             <button onClick={handleSignup} style={{ width: '100%' }}>Sign Up</button>
         </div>
     );
