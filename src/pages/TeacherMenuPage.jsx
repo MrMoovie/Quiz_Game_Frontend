@@ -7,6 +7,7 @@ import {HOST} from "../Constants.js";
 function TeacherMenuPage({user}) {
     const navigate = useNavigate()
     const [students, setStudents] = useState([])
+    const [entryCode, setEntryCode] = useState("");
 
     const eventSourceRef = useRef(null)
 
@@ -15,16 +16,24 @@ function TeacherMenuPage({user}) {
         navigate("/");
     };
 
-    const handleCreate = () =>{
-        const token = Cookies.get("token")
-        axios.get(HOST+"create-race", {params:{token}})
-            .then((res)=>{console.log(res)})
+    const handleCreate = () => {
+        const token = Cookies.get("token");
 
-        if(!eventSourceRef.current) {
-            listen(token)
+        axios.get(HOST + "create-race", { params: { token } })
+            .then((res) => {
+                console.log("Response from server:", res.data);
+                if (res.data && res.data.entryCode) {
+                    setEntryCode(res.data.entryCode);
+                }
+            })
+            .catch((err) => {
+                console.error("Error creating race:", err);
+            });
+
+        if (!eventSourceRef.current) {
+            listen(token);
         }
-
-    }
+    };
     const listen = (token) =>{
         const listener = new EventSource(HOST + "subscribe?token=" + token);
         listener.addEventListener("lobby-update", (event) => {
@@ -71,47 +80,28 @@ function TeacherMenuPage({user}) {
     },[navigate])
 
     return (
-        <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
-                <span> hello{user?.fullName} (teacher)</span>
-                <button onClick={handleLogout}>התנתק</button>
-            </div>
+        <div>
+            <h1>ניהול מרוץ</h1>
+            <button onClick={handleCreate}>צור מרוץ חדש</button>
 
-            <div>
-                TEACHER_MENU_PAGE
-            </div>
+            {/* הצגת קוד הכניסה */}
+            {entryCode && <h2>קוד כניסה: {entryCode}</h2>}
 
-            <button onClick={()=>{handleCreate()}}>
-                Create Race
-            </button>
-            {/* כפתור התחלה (רק אם יש כבר סטודנטים)*/}
+            <button onClick={handleLogout}>התנתק</button>
+
+            <h3>תלמידים בלובי ({students.length}):</h3>
+            <ul>
+                {students.map((s, index) => (
+                    <li key={index}>{s.name} - מסלול: {s.trackId}</li>
+                ))}
+            </ul>
+
+            {/* כפתור להתחלת המרוץ בפועל */}
             {students.length > 0 && (
-                <button onClick={handleStart} style={{ backgroundColor: 'green', color: 'white', marginLeft: '10px' }}>
-                    Start Race!
-                </button>
+                <button onClick={handleStart}>התחל מרוץ!</button>
             )}
-
-            <div>
-                <h1>Students List</h1>
-                <ul>
-                    {students.map((std, index) => (
-                        // Always add a unique 'key' to list items in React
-                        <li key={std || index}>
-
-                            {/* Option 1: Print specific fields */}
-                            Std name: {std.name} | Track ID: {std.trackId}
-
-                            {/* Option 2: Print the raw JSON object for debugging */}
-                            {/* {JSON.stringify(race)} */}
-
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </>
-
-
-    )
+        </div>
+    );
 }
 
 export default TeacherMenuPage;
