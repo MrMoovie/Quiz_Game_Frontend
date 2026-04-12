@@ -8,6 +8,7 @@ function StudentMenuPage({user}) {
     const navigate = useNavigate()
     const [races, setRaces] = useState([])
     const [isStarted, setStarted] = useState(false)
+    const [isWaiting, setIsWaiting] = useState(false);
 
     const eventSourceRef = useRef(null)
 
@@ -58,19 +59,30 @@ function StudentMenuPage({user}) {
 
     const handleJoin = (entryCode) => {
         const token = Cookies.get("token")
+        setIsWaiting(true);
 
         axios.get('http://localhost:8080/join-race', {
-            params: {
-                token,
-                entryCode
-            }
+            params: { token, entryCode }
         }).then(res => {
-            console.log(res)
-        })
-        if (!eventSourceRef.current) {
-            listen(token)
-        }
-    }
+            if (res.data.success) {
+                if (res.data.isStarted) {
+                    navigate("/game");
+                } else {
+                    console.log("Joined! Waiting for teacher to start...");
+                    if (!eventSourceRef.current) {
+                        listen(token);
+                    }
+                }
+            } else {
+                setIsWaiting(false);
+                alert("שגיאה בהצטרפות: " + res.data.errorCode);
+            }
+        }).catch(err => {
+            setIsWaiting(false);
+            console.error(err);
+        });
+    };
+
 
     const listen = (token) => {
         const listener = new EventSource(HOST + "subscribe?token=" + token)
@@ -93,6 +105,11 @@ function StudentMenuPage({user}) {
             <div>
                 STUDENT_MENU_PAGE
             </div>
+            {isWaiting && !isStarted && (
+                <div style={{ backgroundColor: '#fff3cd', padding: '15px', textAlign: 'center' }}>
+                    <h3>הצטרפת בהצלחה! ממתין למורה שיתחיל את המרוץ... </h3>
+                </div>
+            )}
             <div>
                 <h1>Races List</h1>
                 <ul>

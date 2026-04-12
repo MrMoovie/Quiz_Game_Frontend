@@ -26,8 +26,8 @@ function MenuWrapper(){
         }else{
             axios.get(HOST + "get-user-type", {params:{token}})
                 .then((response) =>{
-                    setUserType(response.data.userType)
-                    setUserData(response.data.user_info);  // מחזיר פרטי משתמש
+                    setUserType(response.data.userType || response.data.type)
+                    setUserData(response.data.user_info || response.data.userInfo);  // מחזיר פרטי משתמש
                 })
         }
     },[navigate]);

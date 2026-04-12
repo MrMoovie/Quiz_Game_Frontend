@@ -43,8 +43,12 @@ function TeacherMenuPage({user}) {
     const handleStart = () => {
         const token = Cookies.get("token");
         axios.get(HOST + "start-race", { params: { token } })
-            .then(() => {
-                navigate("/game");
+            .then((res) => {
+                if (res.data.success) {
+                    navigate("/game");
+                } else {
+                    alert("שגיאה בהפעלת המשחק");
+                }
             })
             .catch(err => console.error("Failed to start race", err));
     }
