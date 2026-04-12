@@ -1,42 +1,152 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  box-sizing: border-box;
+  user-select: none;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin: 0 0 15px 0;
   text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+  color: #f1c40f;
+  text-shadow: 3px 3px 0px #c0392b;
 }
 
 .card {
-  padding: 2em;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 24px;
+  padding: 2rem;
+  width: 420px; /* Wider as requested */
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-height: 520px;
+  justify-content: space-between;
 }
 
-.read-the-docs {
-  color: #888;
+.card h2 {
+  margin: 0 0 5px 0;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.role-selection {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 5px;
+}
+
+.role-card {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.4);
+  border: 3px solid transparent;
+  border-radius: 16px;
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.role-card:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.role-card.active {
+  background: #f1c40f;
+  border-color: #f39c12;
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4);
+}
+
+.role-card.active .label,
+.role-card.active .icon {
+  color: #2c3e50;
+}
+
+.role-card .icon {
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+}
+
+.role-card .label {
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.game-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 3px solid #3498db;
+  font-size: 1.1rem;
+  font-family: inherit;
+  font-weight: 600;
+  box-sizing: border-box;
+  outline: none;
+  background-color: white;
+  color: #2c3e50;
+  transition: all 0.2s ease;
+}
+
+.game-input:focus {
+  border-color: #f1c40f;
+  box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+}
+
+.input-group {
+  text-align: left;
+  width: 100%;
+}
+.error-text {
+  color: #2C3E50;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-align: center;
+
+  min-height: 1.2rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 800;
+  color: #2C3E50;
+  font-size: 0.95rem;
+}
+
+
+
+.btn {
+  margin-top: 10px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+.footer-links p {
+  margin: 0 0 10px 0;
+  color: #ecf0f1;
+  font-size: 0.95rem;
+}
+
+@media (max-height: 700px) {
+  h1 { font-size: 2rem; margin-bottom: 10px; }
+  .card { padding: 1.2rem; gap: 10px; }
+  .role-card { padding: 8px; }
 }

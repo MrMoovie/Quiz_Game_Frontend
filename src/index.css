@@ -1,11 +1,10 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: 600;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,56 +12,66 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
   margin: 0;
+  padding: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 2.2rem;
   line-height: 1.1;
+  color: #f1c40f;
+  text-shadow: 2px 2px 0px #c0392b;
+  margin: 0 0 15px 0;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+button, .button-link {
+  border-radius: 12px;
+  border: 3px solid #f39c12;
+  padding: 10px 20px;
+  font-size: 1.1rem;
+  font-weight: 800;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #f1c40f;
+  color: #2c3e50;
   cursor: pointer;
-  transition: border-color 0.25s;
+  box-shadow: 0 4px 0 #d35400;
+  transition: all 0.1s ease;
+  text-decoration: none;
+  display: inline-block;
 }
-button:hover {
-  border-color: #646cff;
+
+button:hover, .button-link:hover {
+  background-color: #f39c12;
+  transform: translateY(1px);
+  box-shadow: 0 3px 0 #d35400;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+
+button:active, .button-link:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+.signup-btn {
+  background-color: #2ecc71;
+  border-color: #27ae60;
+  box-shadow: 0 4px 0 #1e8449;
+  color: white;
+}
+
+.signup-btn:hover {
+  background-color: #27ae60;
+  color: white;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   }
 }

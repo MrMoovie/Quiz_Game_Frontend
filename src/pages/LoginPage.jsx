@@ -1,58 +1,110 @@
 import {useEffect, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 
 const LoginPage = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [selectedType, setSelectedType] = useState(1); // 1 = Student, 2 = Teacher
+    const [formData, setFormData] = useState({
+        username: '',
+        password: '',
+        selectedType: 1
+    });
+
+    const [errorMessage, setErrorMessage] = useState('Waiting for login...');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    // ALTER THIS
     useEffect(() => {
         const token = Cookies.get("token");
         if (token != null) {
-            navigate("/menu")
+            navigate("/menu");
         }
-    }, [navigate])
+    }, [navigate]);
 
     const handleLogin = () => {
+        setIsLoading(true);
+
         axios.get("http://localhost:8080/login", {
-            params: { username, password, selectedType }
-        }).then(response => {
+            params: {
+                username: formData.username,
+                password: formData.password,
+                selectedType: formData.selectedType
+            }
+        }).then((response) => {
             if (response.data.success) {
-                // שמירה ב-Cookies
-                Cookies.set('token', response.data.token);
+                Cookies.set("token", response.data.token);
                 navigate("/menu");
             } else {
-                alert("התחברות נכשלה: " + (response.data.errorCode || "פרטים שגויים"));
+                setErrorMessage("Oops! Check your details again." + response.data.errorCode);
             }
+            setIsLoading(false);
         }).catch(err => {
             console.error(err);
-            alert("שגיאת תקשורת עם השרת");
+            setErrorMessage("Connection lost! Try again.");
+            setIsLoading(false);
         });
     };
 
     return (
-        <div style={{ padding: '40px', maxWidth: '400px', margin: 'auto' }}>
-            <h2>Login</h2>
-            <select value={selectedType} onChange={(e) => setSelectedType(Number(e.target.value))} style={{ width: '100%', marginBottom: '10px' }}>
-                <option value={1}>Student</option>
-                <option value={2}>Teacher</option>
-            </select>
-            <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} style={{ width: '100%', marginBottom: '10px' }} />
-            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: '100%', marginBottom: '10px' }} />
+        <div className="login-container">
+            <div className="card">
+                <div style={{textAlign: 'center'}}>
+                    <span><h1>MATH RACERS</h1></span>
+                </div>
 
-            <button onClick={handleLogin} style={{ width: '100%', marginBottom: '10px' }}>Sign In</button>
+                <div className="input-group">
+                    <label>Who are you?</label>
+                    <div className="role-selection">
+                        <div
+                            className={`role-card ${formData.selectedType === 1 ? 'active' : ''}`}
+                            onClick={() => !isLoading && setFormData({...formData, selectedType: 1})}
+                        >
+                            <span className="icon">🎓</span>
+                            <span className="label">Student</span>
+                        </div>
+                        <div
+                            className={`role-card ${formData.selectedType === 2 ? 'active' : ''}`}
+                            onClick={() => !isLoading && setFormData({...formData, selectedType: 2})}
+                        >
+                            <span className="icon">👨‍🏫</span>
+                            <span className="label">Teacher</span>
+                        </div>
+                    </div>
+                </div>
 
-            <div style={{ textAlign: 'center', marginTop: '10px' }}>
-                <span>Don't have an account? </span>
-                <button
-                    onClick={() => navigate("/signup")}
-                    style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
-                >
-                    Sign Up here
+                <div className="input-group">
+                    <input
+                        type="text"
+                        placeholder="Choose Username"
+                        className="game-input"
+                        disabled={isLoading}
+                        onChange={(e) =>
+                            setFormData({...formData, username: e.target.value})}
+                    />
+                </div>
+
+                <div className="input-group">
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        className="game-input"
+                        disabled={isLoading}
+                        onChange={(e) =>
+                            setFormData({...formData, password: e.target.value})}
+                    />
+                </div>
+
+                <div className="error-text" style={{color: '#2C3E50'}}>
+                    {errorMessage}
+                </div>
+
+
+                <button className="btn" onClick={handleLogin} disabled={isLoading}>
+                    Sign in
+                </button>
+
+                <button className="btn" onClick={() => navigate("/signup")}>
+                    Sign Up Here
                 </button>
             </div>
         </div>
