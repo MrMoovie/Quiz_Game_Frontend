@@ -42,13 +42,7 @@ function StudentMenuPage({user}) {
             getRaces()
         }
 
-        return () => {
-            if (eventSourceRef.current) {
-                console.log("Closing SSE connection...");
-                eventSourceRef.current.close();
-                eventSourceRef.current = null;
-            }
-        };
+
     }, [navigate])
 
     useEffect(() => {
@@ -58,47 +52,32 @@ function StudentMenuPage({user}) {
     }, [isStarted, navigate]);
 
     const handleJoin = (entryCode) => {
-        const token = Cookies.get("token")
+        const token = Cookies.get("token");
         setIsWaiting(true);
 
-        axios.get('http://localhost:8080/join-race', {
-            params: { token, entryCode }
-        }).then(res => {
-            if (res.data.success) {
-                if (res.data.isStarted) {
-                    navigate("/game");
+        axios.get(`${HOST}join-race`, { params: { token, entryCode } })
+            .then(res => {
+                if (res.data.success) {
+                    // Assuming the backend returns the actual raceId upon joining
+                    const joinedRaceId = res.data.raceId;
+                    navigate(`/lobby/${joinedRaceId}`);
                 } else {
-                    console.log("Joined! Waiting for teacher to start...");
-                    if (!eventSourceRef.current) {
-                        listen(token);
-                    }
+                    alert("Error joining: " + res.data.errorCode);
                 }
-            } else {
-                setIsWaiting(false);
-                alert("שגיאה בהצטרפות: " + res.data.errorCode);
-            }
-        }).catch(err => {
-            setIsWaiting(false);
-            console.error(err);
-        });
+            })
+            .catch(err => console.error(err))
+            .finally(() => setIsWaiting(false));
     };
 
 
-    const listen = (token) => {
-        const listener = new EventSource(HOST + "subscribe?token=" + token)
-        listener.addEventListener("game-started", (event) => {
-            setStarted(JSON.parse(event.data.isStarted))
-        });
 
-        eventSourceRef.current = listener;
-    }
 
 
     return (
         <>
             <div style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
 
-                <span> wellcome{user?.fullName} (student)</span>
+                <span> welcome{user?.fullName} (student)</span>
                 <button onClick={handleLogout}>התנתק</button>
             </div>
 

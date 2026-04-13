@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import Cookies from "js-cookie";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
@@ -10,7 +10,6 @@ function TeacherMenuPage({user}) {
     const [races, setRaces] = useState([]);
     const [entryCode, setEntryCode] = useState("");
 
-    const eventSourceRef = useRef(null)
     const [openMenuId, setOpenMenuId] = useState(null);
 
     const handleLogout = () => {
@@ -18,23 +17,32 @@ function TeacherMenuPage({user}) {
         navigate("/");
     };
 
-    const handleCreate = () =>{
+    // const handleCreate = () =>{
+    //     const token = Cookies.get("token")
+    //     axios.get(HOST+"create-race", {params:{token}})
+    //         .then((res)=>{
+    //             if (res.data.success) {
+    //                 // 2. הוספת המרוץ החדש לרשימה (בהנחה שהשרת מחזיר אובייקט מרוץ)
+    //                 // אם השרת מחזיר רק הצלחה, אפשר להוסיף אובייקט זמני לצרכי תצוגה
+    //                 const newRace = res.data.race || { id: res.data.raceId, entryCode: res.data.entryCode };
+    //                 setRaces((prevRaces) => [...prevRaces, newRace]);
+    //                 console.log("Race created:", newRace);
+    //             }
+    //         })
+    //         .catch(err => console.error("Create race failed", err));
+    //
+    //
+    // };
+    const handleCreate = () => {
         const token = Cookies.get("token")
-        axios.get(HOST+"create-race", {params:{token}})
+        axios.get(HOST + "create-race", {params:{token}})
             .then((res)=>{
                 if (res.data.success) {
-                    // 2. הוספת המרוץ החדש לרשימה (בהנחה שהשרת מחזיר אובייקט מרוץ)
-                    // אם השרת מחזיר רק הצלחה, אפשר להוסיף אובייקט זמני לצרכי תצוגה
-                    const newRace = res.data.race || { id: res.data.raceId, entryCode: res.data.entryCode };
-                    setRaces((prevRaces) => [...prevRaces, newRace]);
-                    console.log("Race created:", newRace);
+                    const newRaceId = res.data.raceId;
+                    navigate(`/lobby/${newRaceId}`); // Move straight to the lobby
                 }
             })
             .catch(err => console.error("Create race failed", err));
-
-        if (!eventSourceRef.current) {
-            listen(token);
-        }
     };
 
     const handleEdit = (raceId) => {
@@ -55,20 +63,7 @@ function TeacherMenuPage({user}) {
         navigate(`/stats/${raceId}`); // ניווט לדף סטטיסטיקה עם ה-ID
     };
 
-    const listen = (token) =>{
-        const listener = new EventSource(HOST + "subscribe?token=" + token);
-        listener.addEventListener("lobby-update", (event) => {
-            const student = JSON.parse(event.data);
-            const studentDetails = {
-                name:student.studentName,
-                trackId:student.trackId
-            };
-            setStudents((prevStudents) => [...prevStudents, studentDetails]);
-            console.log(student)
-        });
 
-        eventSourceRef.current = listener
-    }
 
     const handleStart = () => {
         const token = Cookies.get("token");
@@ -91,13 +86,6 @@ function TeacherMenuPage({user}) {
             navigate("/")
         }
 
-        return () => {
-            if (eventSourceRef.current) {
-                console.log("Closing SSE connection...");
-                eventSourceRef.current.close();
-                eventSourceRef.current = null;
-            }
-        };
     },[navigate])
 
     const menuItemStyle = {

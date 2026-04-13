@@ -2,6 +2,7 @@ import LoginPage from './pages/LoginPage.jsx'
 import SignupPage from './pages/SignupPage.jsx'
 import MenuWrapper from './MenuWrapper.jsx'
 import GameWrapper from './GameWrapper.jsx'
+import LobbyPage from "./pages/LobbyPage.jsx";
 
 // TEST
 import TeacherTestPage from './TEST/TeacherTestPage.jsx'
@@ -20,6 +21,7 @@ function App() {
                 <Route path={"/signup"} element={<SignupPage />}/>
                 <Route path={"/menu"} element={<MenuWrapper />}/>
                 <Route path={"/game"} element={<GameWrapper />}/>
+                <Route path={"/lobby/:raceId"} element={<LobbyPage />}/>
 
                 {/*TEST*/}
                 <Route path={"/test-tch"} element={<TeacherTestPage />}/>
