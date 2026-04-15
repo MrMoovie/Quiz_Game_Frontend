@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { HOST } from "../Constants.js";
+import "../style/LobbyPage.css";
 
 function LobbyPage({ user, role }) {
     // role should be passed as a prop from your router (e.g., role="teacher" or "student")
@@ -79,30 +80,30 @@ function LobbyPage({ user, role }) {
     };
 
     return (
-        <div style={{ padding: '40px', textAlign: 'center', fontFamily: 'sans-serif' }}>
+        <div className="lobby-page">
             <h1>{teacherName}'s Lobby</h1>
 
-            <div style={{ margin: '20px auto', maxWidth: '400px' , padding: '20px', borderRadius: '10px' }}>
+            <div className="lobby-page__panel">
                 <h3>Joined Students ({students.length})</h3>
-                <ul style={{ listStyleType: 'none', padding: 0 }}>
+                <ul className="lobby-page__students-list">
                     {students.map((std, idx) => (
-                        <li key={idx} style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>
+                        <li key={idx} className="lobby-page__student-item">
                             {std.name} {std.name === user?.fullName ? "(You)" : ""}
                         </li>
                     ))}
                 </ul>
-                {students.length === 0 && <p>Waiting for students to join...</p>}
+                {students.length === 0 && <p className="lobby-page__waiting-text">Waiting for students to join...</p>}
             </div>
 
             {role === "teacher" ? (
                 <button
                     onClick={handleStartGame}
-                    style={{ padding: '10px 30px', fontSize: '18px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+                    className="lobby-page__start-button"
                 >
                     Start Game
                 </button>
             ) : (
-                <p style={{ color: '#555', fontStyle: 'italic' }}>Waiting for the teacher to start the race...</p>
+                <p className="lobby-page__teacher-waiting-text">Waiting for the teacher to start the race...</p>
             )}
         </div>
     );

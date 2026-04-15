@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { HOST } from "../Constants.ts";
 import LobbyPage from "../pages/LobbyPage.jsx";
+import "../style/LobbyWrapper.css";
 
 function LobbyWrapper() {
     const navigate = useNavigate();
-    const { raceId } = useParams();
 
     // FIX 1: Removed the {} around null. Removed the unused 'role' state.
     const [user, setUser] = useState(null);
@@ -50,7 +50,7 @@ function LobbyWrapper() {
     }, [navigate]);
 
     if (loading) {
-        return <div style={{ textAlign: 'center', marginTop: '50px' }}>Loading Lobby...</div>;
+        return <div className="lobby-wrapper__loading">Loading Lobby...</div>;
     }
 
     // Now 'user' has the exact structure we need, and 'user.role' will be a clean string!

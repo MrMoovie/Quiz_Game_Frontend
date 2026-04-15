@@ -1,0 +1,42 @@
+.lobby-page {
+    padding: 40px;
+    text-align: center;
+    font-family: sans-serif;
+}
+
+.lobby-page__panel {
+    margin: 20px auto;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.lobby-page__students-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.lobby-page__student-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.lobby-page__waiting-text {
+    margin: 0;
+}
+
+.lobby-page__start-button {
+    padding: 10px 30px;
+    font-size: 18px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.lobby-page__teacher-waiting-text {
+    color: #555;
+    font-style: italic;
+}
+

@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {HOST} from "../Constants.js";
+import '../style/StudentMenuPage.css';
 
 function StudentMenuPage({user}) {
     const navigate = useNavigate()
@@ -75,7 +76,7 @@ function StudentMenuPage({user}) {
 
     return (
         <>
-            <div style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
+            <div className="student-menu-header">
 
                 <span> welcome{user?.fullName} (student)</span>
                 <button onClick={handleLogout}>התנתק</button>
@@ -85,7 +86,7 @@ function StudentMenuPage({user}) {
                 STUDENT_MENU_PAGE
             </div>
             {isWaiting && !isStarted && (
-                <div style={{ backgroundColor: '#fff3cd', padding: '15px', textAlign: 'center' }}>
+                <div className="waiting-message">
                     <h3>הצטרפת בהצלחה! ממתין למורה שיתחיל את המרוץ... </h3>
                 </div>
             )}

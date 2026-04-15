@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import '../style/LoginPage.css';
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({
@@ -48,7 +49,7 @@ const LoginPage = () => {
     return (
         <div className="login-container">
             <div className="card">
-                <div style={{textAlign: 'center'}}>
+                <div className="login-title-wrapper">
                     <span><h1>MATH RACERS</h1></span>
                 </div>
 
@@ -94,7 +95,7 @@ const LoginPage = () => {
                     />
                 </div>
 
-                <div className="error-text" style={{color: '#2C3E50'}}>
+                <div className="error-text">
                     {errorMessage}
                 </div>
 

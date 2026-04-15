@@ -1,0 +1,87 @@
+.student-game-page {
+    padding: 20px;
+    direction: rtl;
+    font-family: sans-serif;
+    max-width: 500px;
+    margin: auto;
+}
+
+.student-game-page__btn {
+    width: 100%;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.student-game-page__btn--add {
+    margin-bottom: 20px;
+    background-color: #f1f8e9;
+    border: 1px solid #4caf50;
+}
+
+.student-game-page__question-card {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.student-game-page__input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.student-game-page__btn--submit {
+    margin-bottom: 20px;
+    background-color: #fff3e0;
+    border: 1px solid #ff9800;
+}
+
+.student-game-page__result {
+    padding: 15px;
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.student-game-page__result--correct {
+    background-color: #c8e6c9;
+    color: #2e7d32;
+}
+
+.student-game-page__result--wrong {
+    background-color: #ffcdd2;
+    color: #c62828;
+}
+
+.student-game-page__score {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.student-game-page__divider {
+    margin: 30px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}
+
+.student-game-page__btn--finish {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    font-weight: bold;
+}
+
+.student-game-page__error {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+}
+

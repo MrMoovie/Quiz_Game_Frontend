@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import '../style/SignupPage.css';
 
 const SignupPage = () => {
     const [formData, setFormData] = useState({
@@ -61,37 +62,37 @@ const SignupPage = () => {
     };
 
     return (
-        <div className="login-container">
-            <div className="card" style={{width: '450px'}}>
-                <div style={{textAlign: 'center'}}>
+        <div className="signup-container">
+            <div className="signup-card">
+                <div className="signup-title-wrapper">
                     <h1>CREATE ACCOUNT</h1>
                 </div>
 
-                <div className="input-group">
+                <div className="signup-input-group">
                     <label>Join the race as:</label>
-                    <div className="role-selection">
+                    <div className="signup-role-selection">
                         <div
-                            className={`role-card ${formData.selectedType === 1 ? 'active' : ''}`}
+                            className={`signup-role-card ${formData.selectedType === 1 ? 'active' : ''}`}
                             onClick={() => !isLoading && setFormData({...formData, selectedType: 1})}
                         >
-                            <span className="icon">🎓</span>
-                            <span className="label">Student</span>
+                            <span className="signup-icon">🎓</span>
+                            <span className="signup-label">Student</span>
                         </div>
                         <div
-                            className={`role-card ${formData.selectedType === 2 ? 'active' : ''}`}
+                            className={`signup-role-card ${formData.selectedType === 2 ? 'active' : ''}`}
                             onClick={() => !isLoading && setFormData({...formData, selectedType: 2})}
                         >
-                            <span className="icon">👨‍🏫</span>
-                            <span className="label">Teacher</span>
+                            <span className="signup-icon">👨‍🏫</span>
+                            <span className="signup-label">Teacher</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="input-group">
+                <div className="signup-input-group">
                     <input
                         type="text"
                         placeholder="Full Name"
-                        className="game-input"
+                        className="signup-input"
                         disabled={isLoading}
                         onChange={(e) =>
                             setFormData({...formData, fullName: e.target.value})
@@ -99,11 +100,11 @@ const SignupPage = () => {
                     />
                 </div>
 
-                <div className="input-group">
+                <div className="signup-input-group">
                     <input
                         type="text"
                         placeholder="Choose Username"
-                        className="game-input"
+                        className="signup-input"
                         disabled={isLoading}
                         onChange={(e) =>
                             setFormData({...formData, username: e.target.value})
@@ -111,11 +112,11 @@ const SignupPage = () => {
                     />
                 </div>
 
-                <div className="input-group">
+                <div className="signup-input-group">
                     <input
                         type="password"
                         placeholder="Password"
-                        className="game-input"
+                        className="signup-input"
                         disabled={isLoading}
                         onChange={(e) =>
                             setFormData({...formData, password: e.target.value})
@@ -123,11 +124,11 @@ const SignupPage = () => {
                     />
                 </div>
 
-                <div className="input-group">
+                <div className="signup-input-group">
                     <input
                         type="password"
                         placeholder="Confirm Password"
-                        className="game-input"
+                        className="signup-input"
                         disabled={isLoading}
                         onChange={(e) =>
                             setFormData({...formData, confirmPassword: e.target.value})
@@ -135,15 +136,15 @@ const SignupPage = () => {
                     />
                 </div>
 
-                <div className="error-text" style={{color: '#2C3E50'}}>
+                <div className="signup-error-text">
                     {errorMessage}
                 </div>
 
-                <button className="btn" onClick={handleSignup}>
+                <button className="signup-btn" onClick={handleSignup}>
                     Sign up
                 </button>
 
-                <button className="btn" onClick={() => navigate("/login")}>
+                <button className="signup-btn" onClick={() => navigate("/login")}>
                     Already have an account? Log in
                 </button>
             </div>

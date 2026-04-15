@@ -1,0 +1,11 @@
+.student-menu-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.waiting-message {
+    background-color: #fff3cd;
+    padding: 15px;
+    text-align: center;
+}
