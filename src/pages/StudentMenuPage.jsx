@@ -3,16 +3,22 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { HOST } from "../Constants.js";
+import '../style/StudentMenuPage.css'
 
 function StudentMenuPage() {
     const navigate = useNavigate();
     const [races, setRaces] = useState([]);
     const [isWaiting, setIsWaiting] = useState(false);
+    const [isRaceFull, setIsRaceFull] = useState(false);
+    const [invalidCode, setInvalidCode] = useState(false);
 
     // State to manage input values for each specific race row
     const [inputs, setInputs] = useState({});
 
     const handleInputChange = (raceId, value) => {
+        if (invalidCode) {
+            setInvalidCode(false);
+        }
         setInputs(prev => ({
             ...prev,
             [raceId]: value
@@ -42,7 +48,10 @@ function StudentMenuPage() {
     const handleJoin = (raceId) => {
         const entryCode = inputs[raceId];
         if (!entryCode) return;
-
+        setInputs(prev => ({
+            ...prev,
+            [raceId]: ""
+        }));
         const token = Cookies.get("token");
         setIsWaiting(true);
 
@@ -50,8 +59,10 @@ function StudentMenuPage() {
             .then(res => {
                 if (res.data.success) {
                     navigate(`/lobby/${res.data.raceId}`);
+                } else if (res.data.error === 1016) {
+                    setIsRaceFull(true);
                 } else {
-                    alert("Invalid code or connection error");
+                    setInvalidCode(true)
                 }
             })
             .catch(err => console.error(err))
@@ -67,24 +78,15 @@ function StudentMenuPage() {
     const getStatusText = (status) => {
         switch (status) {
             case 0:
-                return "Closed";
-            case 1:
                 return "Open";
+            case 1:
+                return "Closed";
             case 2:
-                return "Running";
+                return "Open";
             default:
                 return "Unknown";
         }
     };
-
-    useEffect(() => {
-        const token = Cookies.get("token");
-        if (!token) {
-            navigate("/");
-        } else {
-            getRaces();
-        }
-    }, [navigate]);
 
 
     return (
@@ -153,8 +155,8 @@ function StudentMenuPage() {
                                                 padding: '4px 8px',
                                                 borderRadius: '12px',
                                                 fontSize: '0.85em',
-                                                backgroundColor: race.status === 1 ? '#e8f5e9' : '#f5f5f5',
-                                                color: race.status === 1 ? '#2e7d32' : '#616161',
+                                                backgroundColor: race.status === 1 ? '#f5f5f5' : '#e8f5e9',
+                                                color: race.status === 1 ? '#616161' : '#2e7d32',
                                                 fontWeight: 'bold'
                                             }}>
                                                 {getStatusText(race.status)}
@@ -165,8 +167,9 @@ function StudentMenuPage() {
                                                 <input
                                                     type="text"
                                                     placeholder="Code"
-                                                    value={inputs[race.id] || ""}
-                                                    onChange={(e) => handleInputChange(race.id, e.target.value)}
+                                                    value={invalidCode? "" : inputs[race.id] || ""}
+                                                    onChange={(e) =>
+                                                        handleInputChange(race.id, e.target.value)}
                                                     style={{
                                                         padding: '6px',
                                                         borderRadius: '4px',
@@ -176,11 +179,10 @@ function StudentMenuPage() {
                                                 />
                                                 <button
                                                     onClick={() => handleJoin(race.id)}
-                                                    disabled={isWaiting || !inputs[race.id]}
+                                                    disabled={isWaiting || !inputs[race.id] || race.status === 1 || isRaceFull}
                                                     style={{
                                                         padding: '6px 12px',
-                                                        cursor: (isWaiting || !inputs[race.id]) ? 'not-allowed' : 'pointer',
-                                                        backgroundColor: (isWaiting || !inputs[race.id]) ? '#bdc3c7' : '#2ecc71',
+                                                        backgroundColor: (isWaiting || !inputs[race.id] || race.status === 1 || isRaceFull) ? '#bdc3c7' : '#2ecc71',
                                                         color: 'white',
                                                         border: 'none',
                                                         borderRadius: '4px'
@@ -212,10 +214,10 @@ function StudentMenuPage() {
                             <span style={{fontSize: '1.5rem', opacity: 0.7}}>🏁</span>
                             <div style={{textAlign: 'left'}}>
                                 <strong style={{fontSize: '1.1rem', color: '#2d3748', display: 'block'}}>
-                                    No active races found
+                                    No races are found.
                                 </strong>
                                 <span style={{fontSize: '0.9rem', color: '#718096'}}>
-                                Please wait for the teacher.
+                                Please wait for someone to create a race.
                             </span>
                             </div>
                         </div>

@@ -3,15 +3,12 @@ import Cookies from "js-cookie";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {HOST} from "../Constants.js";
-import '../style/TeacherMenuPage.css';
+import '../style/StudentMenuPage.css'; // NEED CHANGING
 
-function TeacherMenuPage({user}) {
+function TeacherMenuPage() {
     const navigate = useNavigate()
-    const [students, setStudents] = useState([])
+    const [isWaiting, setIsWaiting] = useState(false);
     const [races, setRaces] = useState([]);
-    const [entryCode, setEntryCode] = useState("");
-
-    const [openMenuId, setOpenMenuId] = useState(null);
 
     const handleLogout = () => {
         Cookies.remove("token");
@@ -20,20 +17,62 @@ function TeacherMenuPage({user}) {
 
     const handleCreate = () => {
         const token = Cookies.get("token")
-        axios.get(HOST + "create-race", {params:{token}})
-            .then((res)=>{
+        setIsWaiting(true);
+        axios.get(HOST + "create-race", {params: {token}})
+            .then((res) => {
                 if (res.data.success) {
-                    const newRaceId = res.data.raceId;
-                    navigate(`/lobby/${newRaceId}`); // Move straight to the lobby
+                    // const newRaceId = res.data.raceId;
+                    // navigate(`/lobby/${newRaceId}`); // Move straight to the lobby
                 }
             })
-            .catch(err => console.error("Create race failed", err));
+            .catch(err => console.error("Create race failed", err))
+            .finally(() => setIsWaiting(false));
+    };
+    const getStatusText = (status) => {
+        switch (status) {
+            case 0:
+                return "Lobby";
+            case 1:
+                return "Started";
+            case 2:
+                return "Finished";
+            default:
+                return "Unknown";
+        }
+    };
+
+    const handleManage = (raceId, raceStatus) => {
+        if (raceStatus === 1) {
+            navigate(`/game/${raceId}`);
+        }else {
+            navigate(`/lobby/${raceId}`); // Move straight to the lobby
+        }
+        // setIsWaiting(true);
+        // axios.get(HOST + "get-race", {params: {raceId}})
+        //     .then((res) => {
+        //         if (res.data.success) {
+        //
+        //         }
+        //     })
+        //     .catch(err => console.error("Create race failed", err))
+        //     .finally(() => setIsWaiting(false));
+    };
+
+    const getRaces = () => {
+        const token = Cookies.get("token");
+        axios.get(`${HOST}//get-all-teacher-races`, {params: {token}})
+            .then((res) => {
+                if (res.data && res.data.races) {
+                    setRaces(res.data.races);
+                }
+            })
+            .catch(err => console.error("Error fetching races:", err));
     };
 
     const handleEdit = (raceId) => {
         const newName = prompt("Enter new name for the race:");
         if (newName) {
-            setRaces(races.map(r => r.id === raceId ? { ...r, name: newName } : r));
+            setRaces(races.map(r => r.id === raceId ? {...r, name: newName} : r));
         }
     };
 
@@ -49,10 +88,9 @@ function TeacherMenuPage({user}) {
     };
 
 
-
     const handleStart = () => {
         const token = Cookies.get("token");
-        axios.get(HOST + "start-race", { params: { token } })
+        axios.get(HOST + "start-race", {params: {token}})
             .then((res) => {
                 if (res.data.success) {
                     navigate("/game");
@@ -64,113 +102,143 @@ function TeacherMenuPage({user}) {
     }
 
     useEffect(() => {
-        //add maintaining connection...
-
         const token = Cookies.get("token");
         if (!token) {
-            navigate("/")
+            navigate("/");
+        } else {
+            getRaces();
         }
-
-    },[navigate])
-
+    }, [navigate]);
 
     return (
-        /* רקע תכלת חלק לכל הדף */
-        <div className="teacher-menu-page">
+        <div className="card" style={{
+            width: '500px',
+            height: '600px',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden', // מונע מהכרטיס עצמו לגדול
+            border: '1px solid #ddd',
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+        }}>
+            <div style={{
+                padding: '20px',
+                fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column'
+            }}>
 
-            {/* הקונטיינר המרכזי - תופס 80% מהמסך (2 רבעים אמצעיים + קצת יותר) */}
-            <div className="teacher-menu-container">
+                {/* Header Section - נשאר קבוע למעלה */}
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '20px',
+                    borderBottom: '1px solid #eee',
+                    paddingBottom: '10px',
+                    flexShrink: 0 // מונע מהכותרת להתכווץ
+                }}>
+                    <span><strong>{"Available Races"}</strong></span>
 
-                {/* Header */}
-                <div className="teacher-menu-header">
-                    <span>Hello {user?.fullName} (Teacher)</span>
-                    <button onClick={handleLogout} className="logout-button">התנתק</button>
-                </div>
+                    <div className="create-race-section">
+                        <button onClick={handleCreate} className="create-race-button">
+                            Create New Race
+                        </button>
+                    </div>
 
-                {/* Create Race Section */}
-                <div className="create-race-section">
-                    <button onClick={handleCreate} className="create-race-button">
-                        + Create New Race
+                    <button
+                        onClick={handleLogout}
+                        style={{
+                            padding: '5px 15px',
+                            cursor: 'pointer',
+                            backgroundColor: '#f44336',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px'
+                        }}
+                    >
+                        Logout
                     </button>
                 </div>
 
-                {/* Content Area - Split Screen */}
-                <div className="content-area">
 
-                    {/* עמודת מרוצים */}
-                    <div className="races-column">
-                        <h3 className="column-header">
-                            <span>🏁 Open Races</span>
-                            <span className="races-count">{races.length}</span>
-                        </h3>
-                        <div className="column-content">
-                            {races.map((race, index) => (
-                                <div key={race.id || index} className="race-item">
-                                    <div className="race-details">
-                                        <div>{race.name || `Race #${index + 1}`}</div>
-                                        <div>Entry Code: {race.entryCode || "N/A"}</div>
-                                    </div>
 
-                                    <div className="race-actions">
-                                        <button onClick={() => handleStart(race.id)} className="start-race-button">Start</button>
-
-                                        {/* כפתור 3 נקודות */}
-                                        <div style={{ position: 'relative' }}>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setOpenMenuId(openMenuId === race.id ? null : race.id);
-                                                }}
-                                                className="menu-button"
-                                            >
-                                                ⋮
-                                            </button>
-
-                                            {/* תפריט נפתח (מופיע רק כשה-ID תואם) */}
-                                            {openMenuId === race.id && (
-                                                <div className="dropdown-menu">
-                                                    <button onClick={() => {
-                                                        const newName = prompt("שם חדש למרוץ:", race.name);
-                                                        if(newName) setRaces(races.map(r => r.id === race.id ? {...r, name: newName} : r));
-                                                        setOpenMenuId(null);
-                                                    }} className="menu-item">✏️ עריכת שם המירוץ</button>
-
-                                                    <button onClick={() => {
-                                                        if(window.confirm("למחוק את המרוץ?")) setRaces(races.filter(r => r.id !== race.id));
-                                                        setOpenMenuId(null);
-                                                    }} className="menu-item">🗑️ מחיקת המירוץ</button>
-
-                                                    <button onClick={() => {
-                                                        navigate(`/stats/${race.id}`);
-                                                        setOpenMenuId(null);
-                                                    }} className="menu-item">📊 סטטיסטיקות</button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                            {races.length === 0 && <p className="no-items-message">No races created yet.</p>}
+                {/* Scrollable Area - אזור הגלילה */}
+                <div style={{overflowY: 'auto', flexGrow: 1, paddingRight: '5px'}}>
+                    {races.length > 0 ? (
+                        <>
+                            <table style={{width: '100%', borderCollapse: 'collapse', textAlign: 'left'}}>
+                                <thead style={{position: 'sticky', top: 0, zIndex: 1}}>
+                                <tr style={{backgroundColor: '#2C3E50', color: 'white'}}>
+                                    <th style={{padding: '12px', border: '1px solid #dee2e6'}}>ID</th>
+                                    <th style={{padding: '12px', border: '1px solid #dee2e6'}}>Status</th>
+                                    <th style={{padding: '12px', border: '1px solid #dee2e6'}}>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {races.map((race) => (
+                                    <tr key={race.id}>
+                                        <td style={{padding: '12px', border: '1px solid #dee2e6'}}>{race.id}</td>
+                                        <td style={{padding: '12px', border: '1px solid #dee2e6'}}>
+                                            <span style={{
+                                                padding: '4px 8px',
+                                                borderRadius: '12px',
+                                                fontSize: '0.85em',
+                                                backgroundColor: '#e8f5e9',
+                                                color: '#2e7d32',
+                                                fontWeight: 'bold'
+                                            }}>
+                                                {getStatusText(race.status)}
+                                            </span>
+                                        </td>
+                                        <td style={{padding: '12px', border: '1px solid #dee2e6'}}>
+                                            <div style={{display: 'flex', gap: '8px'}}>
+                                                <button
+                                                    onClick={() => handleManage(race.id, race.status)}
+                                                    disabled={isWaiting}
+                                                    style={{
+                                                        padding: '6px 12px',
+                                                        backgroundColor: '#2ecc71',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '4px'
+                                                    }}
+                                                >
+                                                    {isWaiting ? "..." : "Manage"}
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        </>
+                    ) : (
+                        /* Empty State - מוצג במרכז אזור הגלילה */
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '15px',
+                            padding: '30px',
+                            backgroundColor: '#fdfdfe',
+                            borderRadius: '12px',
+                            border: '1px dashed #cbd5e0',
+                            color: '#4a5568',
+                            marginTop: '20px'
+                        }}>
+                            <span style={{fontSize: '1.5rem', opacity: 0.7}}>🏁</span>
+                            <div style={{textAlign: 'left'}}>
+                                <strong style={{fontSize: '1.1rem', color: '#2d3748', display: 'block'}}>
+                                    No races are found.
+                                </strong>
+                                <span style={{fontSize: '0.9rem', color: '#718096'}}>
+                                Waiting for you to create a race.
+                            </span>
+                            </div>
                         </div>
-                    </div>
-
-                    {/* עמודת סטודנטים */}
-                    <div className="students-column">
-                        <h3 className="column-header">
-                            <span>👤 Students in Lobby</span>
-                            <span className="students-count">{students.length}</span>
-                        </h3>
-                        <div className="column-content">
-                            {students.map((std, index) => (
-                                <div key={index} className="student-item">
-                                    <span className="student-name">{std.name}</span>
-                                    <span className="student-track">Track: {std.trackId}</span>
-                                </div>
-                            ))}
-                            {students.length === 0 && <p className="no-items-message">Waiting for students...</p>}
-                        </div>
-                    </div>
-
+                    )}
                 </div>
             </div>
         </div>
