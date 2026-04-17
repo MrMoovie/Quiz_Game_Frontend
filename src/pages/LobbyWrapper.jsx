@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { HOST } from "../Constants.ts";
@@ -8,7 +8,7 @@ import "../style/LobbyWrapper.css";
 
 function LobbyWrapper() {
     const navigate = useNavigate();
-
+    const raceId = useParams();
     // FIX 1: Removed the {} around null. Removed the unused 'role' state.
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ function LobbyWrapper() {
             .finally(() => {
                 setLoading(false);
             });
-    }, [navigate]);
+    }, [navigate, raceId]);
 
     if (loading) {
         return <div className="lobby-wrapper__loading">Loading Lobby...</div>;
