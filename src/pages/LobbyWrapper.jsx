@@ -20,7 +20,8 @@ function LobbyWrapper() {
             return;
         }
 
-        axios.get(`${HOST}get-default-params`, { params: { token } })
+        //Authenticate the user and get his default parameters.
+        axios.get(`${HOST}get-default-params`, { params: { token, raceId } })
             .then(res => {
                 if (res.data.success) {
 
@@ -37,11 +38,13 @@ function LobbyWrapper() {
                     });
 
                 } else {
+                    alert("Failed to authenticate user "+ res.data.errorCode)
                     navigate("/");
                 }
             })
             .catch(err => {
-                console.error("Failed to authenticate user", err);
+                alert("Failed to authenticate user "+ err)
+                console.log()
                 navigate("/");
             })
             .finally(() => {

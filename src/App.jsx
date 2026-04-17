@@ -21,7 +21,7 @@ function App() {
                 <Route path="/login" element={<LoginPage />}/>
                 <Route path={"/signup"} element={<SignupPage />}/>
                 <Route path={"/menu"} element={<MenuWrapper />}/>
-                <Route path={"/game"} element={<GameWrapper />}/>
+                <Route path={"/game/:raceId"} element={<GameWrapper />}/>
                 <Route path={"/lobby/:raceId"} element={<LobbyWrapper />}/>
 
                 {/*TEST*/}
