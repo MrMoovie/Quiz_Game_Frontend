@@ -82,7 +82,7 @@ function StudentMenuPage() {
             case 1:
                 return "Closed";
             case 2:
-                return "Open";
+                return "finished";
             default:
                 return "Unknown";
         }
@@ -155,8 +155,8 @@ function StudentMenuPage() {
                                                 padding: '4px 8px',
                                                 borderRadius: '12px',
                                                 fontSize: '0.85em',
-                                                backgroundColor: race.status === 1 ? '#f5f5f5' : '#e8f5e9',
-                                                color: race.status === 1 ? '#616161' : '#2e7d32',
+                                                backgroundColor: race.status !== 0 ? '#f5f5f5' : '#e8f5e9',
+                                                color: race.status !== 0 ? '#616161' : '#2e7d32',
                                                 fontWeight: 'bold'
                                             }}>
                                                 {getStatusText(race.status)}
@@ -179,7 +179,7 @@ function StudentMenuPage() {
                                                 />
                                                 <button
                                                     onClick={() => handleJoin(race.id)}
-                                                    disabled={isWaiting || !inputs[race.id] || race.status === 1 || isRaceFull}
+                                                    disabled={isWaiting || !inputs[race.id] || race.status !== 0 || isRaceFull}
                                                     style={{
                                                         padding: '6px 12px',
                                                         backgroundColor: (isWaiting || !inputs[race.id] || race.status === 1 || isRaceFull) ? '#bdc3c7' : '#2ecc71',

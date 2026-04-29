@@ -5,7 +5,7 @@ import axios from "axios";
 import { HOST } from "../Constants.js";
 import "../style/LobbyPage.css";
 
-function LobbyPage({ user, role }) {
+function LobbyPage({ user, role, entryCode }) {
     // role should be passed as a prop from your router (e.g., role="teacher" or "student")
     const { raceId } = useParams();
     const navigate = useNavigate();
@@ -94,7 +94,7 @@ function LobbyPage({ user, role }) {
                 </ul>
                 {students.length === 0 && <p className="lobby-page__waiting-text">Waiting for students to join...</p>}
             </div>
-
+            <h1>{entryCode}</h1>
             {role === "teacher" ? (
                 <button
                     onClick={handleStartGame}

@@ -8,10 +8,11 @@ import "../style/LobbyWrapper.css";
 
 function LobbyWrapper() {
     const navigate = useNavigate();
-    const raceId = useParams();
+    const {raceId} = useParams();
     // FIX 1: Removed the {} around null. Removed the unused 'role' state.
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [entryCode, setEntryCode] = useState(null);
 
     useEffect(() => {
         const token = Cookies.get("token");
@@ -19,7 +20,7 @@ function LobbyWrapper() {
             navigate("/");
             return;
         }
-
+        console.log(raceId)
         //Authenticate the user and get his default parameters.
         axios.get(`${HOST}get-default-params`, { params: { token, raceId } })
             .then(res => {
@@ -36,6 +37,7 @@ function LobbyWrapper() {
                         fullName: res.data.fullName,
                         role: mappedRole
                     });
+                    setEntryCode(res.data.entryCode)
 
                 } else {
                     alert("Failed to authenticate user "+ res.data.errorCode)
@@ -58,7 +60,7 @@ function LobbyWrapper() {
 
     // Now 'user' has the exact structure we need, and 'user.role' will be a clean string!
     console.log(user)
-    return <LobbyPage user={user} role={user.role} />;
+    return <LobbyPage user={user} role={user.role} entryCode={entryCode} />;
 }
 
 export default LobbyWrapper;

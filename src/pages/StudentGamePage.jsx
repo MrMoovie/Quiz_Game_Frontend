@@ -66,7 +66,6 @@ const StudentGamePage = () => {
         axios.get("http://localhost:8080/set-track", {
             params: {
                 trackId: formData.trackId,
-                score: formData.score,
                 path: formData.pathChoice,
                 pathChance: formData.pathChance,
                 powerUp: formData.powerUp,
@@ -77,6 +76,7 @@ const StudentGamePage = () => {
             if (!response.data.success) {
                 setErrorMessage("Oops! Check your details again." + response.data.errorCode);
             }
+
             setIsLoading(false);
         }).catch(err => {
             console.error(err);
