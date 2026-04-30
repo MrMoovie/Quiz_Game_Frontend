@@ -58,8 +58,6 @@ const StudentGamePage = () => {
     };
 
 
-
-
     // Persists the current track progress (score, path, position, and current question) to the backend.
     const setTrack = () => {
         setIsLoading(true);
@@ -83,7 +81,7 @@ const StudentGamePage = () => {
             setErrorMessage("Connection lost! Try again.");
             setIsLoading(false);
         });
-};
+    };
 
     // Updates the student's race status on the server (for example, when finishing the race).
     const setRaceStatus = () => {
@@ -129,6 +127,7 @@ const StudentGamePage = () => {
             setIsLoading(false);
         });
     };
+
 
     // Requests a new question for the current track/path and stores its ID for future submissions.
     const addQuestion = () => {
@@ -191,13 +190,17 @@ const StudentGamePage = () => {
             setIsLoading(false);
         });
     };
+
+
     // On first load, verifies token presence and fetches the student's track state.
     useEffect(() => {
         if (initialToken == null) {
             alert("no token found");
+            navigate("/")
         }
         getTrackResponse();
-    },[]);
+    }, [getTrackResponse, navigate, initialToken]);
+
     // After a valid question ID exists, fetches that question's full content from the server.
     useEffect(() => {
         // ברגע ש-getTrackResponse יסיים וה-ID יתעדכן לערך שונה מ-0
@@ -242,10 +245,10 @@ const StudentGamePage = () => {
             {/* 3. הצגת השאלה או הודעת "אין שאלות" */}
             <div className="student-game-page__question-card">
                 {/*{formData.currentQuestionId !== 0 ? (*/}
-                    <div>
-                        <strong>question: </strong>
-                        {formData.question}
-                    </div>
+                <div>
+                    <strong>question: </strong>
+                    {formData.question}
+                </div>
                 {/*) : (*/}
                 {/*    <div style={{ color: '#666', fontStyle: 'italic' }}>*/}
                 {/*         request a question.*/}
@@ -259,8 +262,11 @@ const StudentGamePage = () => {
                 type="number"
                 placeholder="הכנס תשובה כאן"
                 value={formData.answer || ''}
-                onChange={(e) => setFormData(
-                    prev => ({...prev, answer: e.target.value === '' ? '' : Number(e.target.value)}))}
+                onChange={(e) => {
+                    setFormData(
+                        prev => ({...prev, answer: e.target.value === '' ? '' : Number(e.target.value)}))
+                    }
+                }
                 className="student-game-page__input"
             />
 
@@ -275,7 +281,8 @@ const StudentGamePage = () => {
 
             {/* 6. האם עניתי נכון או לא */}
             {formData.rightAnswer !== null && (
-                <div className={`student-game-page__result ${formData.rightAnswer ? 'student-game-page__result--correct' : 'student-game-page__result--wrong'}`}>
+                <div
+                    className={`student-game-page__result ${formData.rightAnswer ? 'student-game-page__result--correct' : 'student-game-page__result--wrong'}`}>
                     {formData.rightAnswer ? (
                         <>
                             תשובה נכונה! (+10 נקודות) ✅

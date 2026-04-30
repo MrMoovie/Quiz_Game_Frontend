@@ -6,6 +6,7 @@ import axios from "axios";
 import {HOST} from "./Constants.js";
 import TeacherGamePage from "./pages/TeacherGamePage.jsx";
 import StudentGamePage from "./pages/StudentGamePage.jsx";
+import StudentGamePageTest from "./pages/StudentGamePageTest.jsx";
 
 const USER_TYPES={
     NONE:0,
@@ -18,7 +19,7 @@ function GameWrapper(){
     const [user, setUser] = useState(null);
 
 
-    const raceId = useParams();
+    const {raceId} = useParams();
 
     useEffect(() => {
         const token = Cookies.get("token")
