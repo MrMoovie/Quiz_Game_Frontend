@@ -6,7 +6,6 @@ import axios from "axios";
 import {HOST} from "./Constants.js";
 import TeacherGamePage from "./pages/TeacherGamePage.jsx";
 import StudentGamePage from "./pages/StudentGamePage.jsx";
-import StudentGamePageTest from "./pages/StudentGamePageTest.jsx";
 
 const USER_TYPES={
     NONE:0,
