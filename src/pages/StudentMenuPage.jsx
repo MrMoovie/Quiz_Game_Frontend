@@ -40,9 +40,26 @@ function StudentMenuPage() {
         const token = Cookies.get("token");
         if (!token) {
             navigate("/");
-        } else {
-            getRaces();
+            return;
         }
+
+        // Fetch initially
+        getRaces();
+
+        // Connect to the "Global Menu" SSE room (raceId = 0)
+        const listener = new EventSource(`${HOST}subscribe?token=${token}&raceId=0`);
+
+        // Listen for new race creations
+        listener.addEventListener("race-created", () => {
+            console.log("New race created! Refreshing student list...");
+            getRaces();
+        });
+
+        // Cleanup: Disconnect when leaving the menu
+        return () => {
+            console.log("Closing global SSE connection...");
+            listener.close();
+        };
     }, [navigate]);
 
     const handleJoin = (raceId) => {

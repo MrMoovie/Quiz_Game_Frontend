@@ -1,10 +1,9 @@
-import {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import '../style/StudentGamePage.css';
 
-// Student game screen: loads track/question state and handles answer submission flow.
 const StudentGamePage = () => {
     const initialToken = Cookies.get("token");
     const [errorMessage, setErrorMessage] = useState('');
@@ -18,22 +17,19 @@ const StudentGamePage = () => {
         currentQuestionId: 0,
         question: '',
         creationDate: null,
-        answer: 0,
-        rightAnswer: false,
+        answer: '', // Initialized as empty string for better input handling
+        rightAnswer: null, // Null to differentiate from false initially
         score: 0,
         pathChance: 0,
         powerUp: 0,
         position: 0
     });
 
-    // Fetches the student's current track data and initializes local game state from the server.
-    let getTrackResponse;
-    getTrackResponse = () => {
+    // Fetches the student's current track data and initializes local game state
+    const getTrackResponse = () => {
         setIsLoading(true);
         axios.get("http://localhost:8080/get-track", {
-            params: {
-                studentToken: initialToken
-            }
+            params: { studentToken: initialToken }
         }).then((response) => {
             if (response.data.success) {
                 setFormData(prev => ({
@@ -47,18 +43,17 @@ const StudentGamePage = () => {
                     currentQuestionId: response.data.track.currentQuestionId,
                 }));
             } else {
-                setErrorMessage("Oops! Check your details again." + response.data.errorCode);
+                setErrorMessage("Oops! Check your details again. " + response.data.errorCode);
             }
-            setIsLoading(false);
         }).catch(err => {
             console.error(err);
             setErrorMessage("Connection lost! Try again.");
+        }).finally(() => {
             setIsLoading(false);
         });
     };
 
-
-    // Persists the current track progress (score, path, position, and current question) to the backend.
+    // Persists the current track progress
     const setTrack = () => {
         setIsLoading(true);
         axios.get("http://localhost:8080/set-track", {
@@ -72,67 +67,61 @@ const StudentGamePage = () => {
             }
         }).then((response) => {
             if (!response.data.success) {
-                setErrorMessage("Oops! Check your details again." + response.data.errorCode);
+                setErrorMessage("Oops! Check your details again. " + response.data.errorCode);
             }
-
-            setIsLoading(false);
         }).catch(err => {
             console.error(err);
             setErrorMessage("Connection lost! Try again.");
-            setIsLoading(false);
-        });
+        }).finally(() => setIsLoading(false));
     };
 
-    // Updates the student's race status on the server (for example, when finishing the race).
+    // Updates the student's race status on the server
     const setRaceStatus = () => {
         setIsLoading(true);
         axios.get("http://localhost:8080/set-status-for-student", {
             params: {
                 trackId: formData.trackId,
-                status: formData.raceStatus,
+                status: 2, // Set to 2 directly since we are finishing
             }
         }).then((response) => {
             if (!response.data.success) {
-                setErrorMessage("Oops! Check your details again." + response.data.errorCode);
+                setErrorMessage("Oops! Check your details again. " + response.data.errorCode);
             }
-            setIsLoading(false);
         }).catch(err => {
             console.error(err);
             setErrorMessage("Connection lost! Try again.");
-            setIsLoading(false);
-        });
+        }).finally(() => setIsLoading(false));
     };
-    // Loads a question by ID and updates the current question details shown to the student.
-    let getQuestion;
-    getQuestion = () => {
-        setIsLoading(true);
 
+    // Loads a question by ID
+    const getQuestion = () => {
+        if (!formData.currentQuestionId) return;
+
+        setIsLoading(true);
         axios.get("http://localhost:8080/getQuestion", {
-            params: {
-                questionId: formData.currentQuestionId
-            }
+            params: { questionId: formData.currentQuestionId }
         }).then((response) => {
             if (response.data.success) {
-                formData.answer = response.data.question.answer;
-                formData.currentQuestionId = response.data.question.id;
-                formData.question = response.data.question.question;
-                formData.creationDate = response.data.question.creationDate;
+                // FIXED: Do not mutate state directly, use setFormData
+                setFormData(prev => ({
+                    ...prev,
+                    answer: response.data.question.answer,
+                    currentQuestionId: response.data.question.id,
+                    question: response.data.question.question,
+                    creationDate: response.data.question.creationDate
+                }));
             } else {
-                setErrorMessage("Oops! Check your details again." + response.data.errorCode);
+                setErrorMessage("Oops! Check your details again. " + response.data.errorCode);
             }
-            setIsLoading(false);
         }).catch(err => {
             console.error(err);
             setErrorMessage("Connection lost! Try again.");
-            setIsLoading(false);
-        });
+        }).finally(() => setIsLoading(false));
     };
 
-
-    // Requests a new question for the current track/path and stores its ID for future submissions.
+    // Requests a new question for the current track/path
     const addQuestion = () => {
         setIsLoading(true);
-
         axios.get("http://localhost:8080/getNewQuestion", {
             params: {
                 studentToken: initialToken,
@@ -141,25 +130,27 @@ const StudentGamePage = () => {
             }
         }).then((response) => {
             if (response.data.success) {
-                formData.currentQuestionId = response.data.question.id;
-                formData.question = response.data.question.question;
-                formData.creationDate = response.data.question.creationDate;
+                // FIXED: Use setFormData
+                setFormData(prev => ({
+                    ...prev,
+                    currentQuestionId: response.data.question.id,
+                    question: response.data.question.question,
+                    creationDate: response.data.question.creationDate,
+                    rightAnswer: null // Reset previous result message
+                }));
                 setTrack();
             } else {
-                setErrorMessage("Oops! Check your details again." + response.data.errorCode);
+                setErrorMessage("Oops! Check your details again. " + response.data.errorCode);
             }
-            setIsLoading(false);
         }).catch(err => {
             console.error(err);
             setErrorMessage("Connection lost! Try again.");
-            setIsLoading(false);
-        });
+        }).finally(() => setIsLoading(false));
     };
 
-    // Sends the student's answer for validation, updates score on success, and persists progress.
+    // Sends the student's answer for validation
     const submitAnswer = () => {
         setIsLoading(true);
-
         axios.get("http://localhost:8080/submit-answer", {
             params: {
                 studentToken: initialToken,
@@ -169,69 +160,50 @@ const StudentGamePage = () => {
             }
         }).then((response) => {
             if (response.data.success) {
-                formData.rightAnswer = response.data.rightAnswer;
-                if (formData.rightAnswer) {
-                    setFormData(prev => {
-                        return {
-                            ...prev,
-                            rightAnswer: true,
-                            score: prev.score + 10
-                        };
-                    });
+                const isCorrect = response.data.rightAnswer;
+                // FIXED: Use setFormData
+                setFormData(prev => ({
+                    ...prev,
+                    rightAnswer: isCorrect,
+                    score: isCorrect ? prev.score + 10 : prev.score
+                }));
+
+                if (isCorrect) {
                     setTrack();
                 }
             } else {
-                setErrorMessage("Oops! Check your details again." + response.data.errorCode);
+                setErrorMessage("Oops! Check your details again. " + response.data.errorCode);
             }
-            setIsLoading(false);
         }).catch(err => {
             console.error(err);
             setErrorMessage("Connection lost! Try again.");
-            setIsLoading(false);
-        });
+        }).finally(() => setIsLoading(false));
     };
 
-
-    // On first load, verifies token presence and fetches the student's track state.
+    // 1. Fetch initial track data on component mount ONLY.
     useEffect(() => {
-        if (initialToken == null) {
-            alert("no token found");
-            navigate("/")
+        if (!initialToken) {
+            alert("No token found");
+            navigate("/");
+            return;
         }
         getTrackResponse();
-    }, [getTrackResponse, navigate, initialToken]);
+        // Disabling the exhaustive-deps rule here because we strictly only want this to run on mount.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [navigate, initialToken]);
 
-    // After a valid question ID exists, fetches that question's full content from the server.
+    // 2. Fetch the question details whenever the currentQuestionId changes to a valid number.
     useEffect(() => {
-        // ברגע ש-getTrackResponse יסיים וה-ID יתעדכן לערך שונה מ-0
         if (formData.currentQuestionId !== 0) {
             getQuestion();
         }
-    }, []); // ירוץ כל פעם שה-ID משתנה
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formData.currentQuestionId]);
 
     const goalScore = 1000;
 
     return (
         <div className="student-game-page">
-
-            {/* 1. כפתור getTrackResponse */}
-            {/*<button*/}
-            {/*    onClick={getTrackResponse}*/}
-            {/*    disabled={isLoading}*/}
-            {/*    style={{*/}
-            {/*        width: '100%',*/}
-            {/*        padding: '15px',*/}
-            {/*        marginBottom: '10px',*/}
-            {/*        cursor: 'pointer',*/}
-            {/*        backgroundColor: '#e3f2fd',*/}
-            {/*        border: '1px solid #2196f3',*/}
-            {/*        borderRadius: '5px'*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*    טען נתוני מסלול (getTrackResponse)*/}
-            {/*</button>*/}
-
-            {/* 2. כפתור addQuestion */}
 
             <button
                 onClick={addQuestion}
@@ -241,36 +213,26 @@ const StudentGamePage = () => {
                 (addQuestion)
             </button>
 
-            {/* 3. הצגת השאלה */}
-            {/* 3. הצגת השאלה או הודעת "אין שאלות" */}
             <div className="student-game-page__question-card">
-                {/*{formData.currentQuestionId !== 0 ? (*/}
                 <div>
                     <strong>question: </strong>
-                    {formData.question}
+                    {formData.question || "Request a question."}
                 </div>
-                {/*) : (*/}
-                {/*    <div style={{ color: '#666', fontStyle: 'italic' }}>*/}
-                {/*         request a question.*/}
-                {/*    </div>*/}
-                {/*)}*/}
             </div>
 
-
-            {/* 4. מקום לשים תשובה */}
             <input
                 type="number"
                 placeholder="הכנס תשובה כאן"
-                value={formData.answer || ''}
+                value={formData.answer}
                 onChange={(e) => {
-                    setFormData(
-                        prev => ({...prev, answer: e.target.value === '' ? '' : Number(e.target.value)}))
-                    }
-                }
+                    setFormData(prev => ({
+                        ...prev,
+                        answer: e.target.value === '' ? '' : Number(e.target.value)
+                    }));
+                }}
                 className="student-game-page__input"
             />
 
-            {/* 5. כפתור submitAnswer */}
             <button
                 onClick={submitAnswer}
                 disabled={isLoading || !formData.currentQuestionId}
@@ -279,38 +241,28 @@ const StudentGamePage = () => {
                 שלח תשובה (submitAnswer)
             </button>
 
-            {/* 6. האם עניתי נכון או לא */}
             {formData.rightAnswer !== null && (
                 <div
                     className={`student-game-page__result ${formData.rightAnswer ? 'student-game-page__result--correct' : 'student-game-page__result--wrong'}`}>
-                    {formData.rightAnswer ? (
-                        <>
-                            תשובה נכונה! (+10 נקודות) ✅
-                            {/* קריאה לפונקציה רק אם התשובה נכונה */}
-                        </>
-                    ) : (
-                        'תשובה שגויה ❌'
-                    )}
+                    {formData.rightAnswer ? 'תשובה נכונה! (+10 נקודות) ✅' : 'תשובה שגויה ❌'}
                 </div>
             )}
 
-            {/* תצוגת הניקוד הנוכחי מתוך היעד (1000) */}
             <div className="student-game-page__score">
                 ניקוד נוכחי: {formData.score} / {goalScore}
             </div>
 
-            <hr className="student-game-page__divider"/>
+            <hr className="student-game-page__divider" />
 
-            {/* כפתור סיום מרוץ (Status 2) */}
             <button
                 onClick={() => {
-                    setFormData(prev => ({...prev, raceStatus: 2}));
-                    setRaceStatus(); // פונקציה ששולחת לשרת את הסטטוס המעודכן
+                    setFormData(prev => ({ ...prev, raceStatus: 2 }));
+                    setRaceStatus();
                 }}
                 disabled={isLoading}
                 className="student-game-page__btn student-game-page__btn--finish"
             >
-                סיום מרוץ ועדכון סטטוס (Set Status )
+                סיום מרוץ ועדכון סטטוס (Set Status)
             </button>
 
             {errorMessage && <p className="student-game-page__error">{errorMessage}</p>}

@@ -105,9 +105,26 @@ function TeacherMenuPage() {
         const token = Cookies.get("token");
         if (!token) {
             navigate("/");
-        } else {
-            getRaces();
+            return;
         }
+
+        // Fetch initially
+        getRaces();
+
+        // Connect to the "Global Menu" SSE room (raceId = 0)
+        const listener = new EventSource(`${HOST}subscribe?token=${token}&raceId=0`);
+
+        // Listen for new race creations so the table updates automatically
+        listener.addEventListener("race-created", () => {
+            console.log("Race created! Refreshing teacher list...");
+            getRaces();
+        });
+
+        // Cleanup: Disconnect when leaving the menu
+        return () => {
+            console.log("Closing global SSE connection...");
+            listener.close();
+        };
     }, [navigate]);
 
     return (
