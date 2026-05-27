@@ -18,7 +18,7 @@ const StudentGamePageTest = () => {
     const [ui, setUi] = useState({ isLoading: true, error: '' });
 
     // Track State: The player's progress and stats
-    const [track, setTrack] = useState({ id: 0, score: 0, position: 0, pathChoice: 0 });
+    const [track, setTrack] = useState({ id: 0, score: 0, position: 0, pathChoice: 0 , currentQuestionId: -1 });
 
     // Question State: The current hurdle
     const [question, setQuestion] = useState({ id: 0, text: '' });
@@ -29,16 +29,14 @@ const StudentGamePageTest = () => {
         result: null // null = waiting to answer, true = correct, false = wrong
     });
 
-    // ==========================================
-    // 2. API ACTIONS (Clean & Separated)
-    // ==========================================
-
     // Fetch the specific text of a question if we have an ID
     const fetchQuestionText = useCallback((questionId) => {
         axios.get(`${HOST}/getQuestion`, { params: { questionId } })
             .then((res) => {
                 if (res.data.success) {
                     setQuestion({ id: res.data.question.id, text: res.data.question.question });
+                    setInteraction(prev => ({ ...prev, result: res.data.question.answerRight }));
+                } else {
                     setUi({ isLoading: false, error: '' });
                 }
             })
@@ -47,6 +45,7 @@ const StudentGamePageTest = () => {
 
     // Initial Load: Get the track, and if there's an active question, load it.
     const loadInitialGame = useCallback(() => {
+
         if (!token) {
             navigate("/");
             return;
@@ -58,9 +57,8 @@ const StudentGamePageTest = () => {
             .then((res) => {
                 if (res.data.success) {
                     const t = res.data.track;
-                    setTrack({ id: t.id, score: t.score, position: t.position, pathChoice: t.path });
-
-                    if (t.currentQuestionId !== 0) {
+                    setTrack({ id: t.id, score: t.score, position: t.position, pathChoice: t.path ,currentQuestionId: t.currentQuestionId});
+                    if (t.currentQuestionId !== -1) {
                         fetchQuestionText(t.currentQuestionId);
                     } else {
                         setUi({ isLoading: false, error: '' });
@@ -77,7 +75,7 @@ const StudentGamePageTest = () => {
         loadInitialGame();
     }, [loadInitialGame]);
 
-    // Request a brand new question from the server
+    // Request a new question from the server
     const handleGetNewQuestion = () => {
         setUi({ isLoading: true, error: '' });
 
@@ -109,7 +107,7 @@ const StudentGamePageTest = () => {
             }
         }).then((res) => {
             if (res.data.success) {
-                const isCorrect = res.data.rightAnswer;
+                const isCorrect = res.data.question.answerRight;
 
                 // Update interaction state to show the result UI
                 setInteraction(prev => ({ ...prev, result: isCorrect }));
@@ -126,12 +124,6 @@ const StudentGamePageTest = () => {
         }).catch(() => setUi({ isLoading: false, error: "Connection lost." }));
     };
 
-    const handleFinishRace = () => {
-        setUi({ isLoading: true, error: '' });
-        axios.get(`${HOST}/set-status-for-student`, { params: { trackId: track.id, status: 2 } })
-            .then(() => alert("Race Finished! Waiting for results."))
-            .catch(() => setUi({ isLoading: false, error: "Failed to finish race." }));
-    };
 
     // ==========================================
     // 3. RENDER UI
@@ -203,16 +195,6 @@ const StudentGamePageTest = () => {
                     </div>
                 )}
             </main>
-
-            <hr className="student-game-page__divider" />
-
-            <button
-                onClick={handleFinishRace}
-                disabled={ui.isLoading}
-                className="student-game-page__btn student-game-page__btn--finish"
-            >
-                Finish Race
-            </button>
         </div>
     );
 };

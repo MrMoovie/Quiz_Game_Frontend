@@ -106,7 +106,7 @@ function TeacherGamePage() {
 
                             return (
                                 <div key={student.id} style={{
-                                    background: "#f9f9f9",
+                                    background: "#f1c40f",
                                     padding: "15px",
                                     borderRadius: "8px",
                                     boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
