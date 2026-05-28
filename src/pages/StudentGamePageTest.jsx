@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useEffect, useState, useCallback} from 'react';
+import {useNavigate} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import '../style/StudentGamePage.css';
@@ -15,13 +15,13 @@ const StudentGamePageTest = () => {
     // ==========================================
 
     // UI State: Controls loading spinners and errors
-    const [ui, setUi] = useState({ isLoading: true, error: '' });
+    const [ui, setUi] = useState({isLoading: true, error: ''});
 
     // Track State: The player's progress and stats
-    const [track, setTrack] = useState({ id: 0, score: 0, position: 0, pathChoice: 0 , currentQuestionId: -1 });
+    const [track, setTrack] = useState({id: 0, score: 0, position: 0, pathChoice: 0, currentQuestionId: -1});
 
     // Question State: The current hurdle
-    const [question, setQuestion] = useState({ id: 0, text: '' });
+    const [question, setQuestion] = useState({id: 0, text: ''});
 
     // Interaction State: What the user is doing right now
     const [interaction, setInteraction] = useState({
@@ -31,16 +31,16 @@ const StudentGamePageTest = () => {
 
     // Fetch the specific text of a question if we have an ID
     const fetchQuestionText = useCallback((questionId) => {
-        axios.get(`${HOST}/getQuestion`, { params: { questionId } })
+        axios.get(`${HOST}/getQuestion`, {params: {questionId}})
             .then((res) => {
                 if (res.data.success) {
                     setQuestion({ id: res.data.question.id, text: res.data.question.question });
-                    setInteraction(prev => ({ ...prev, result: res.data.question.answerRight }));
+                    setInteraction(prev => ({ ...prev, result: res.data.question.answerRight}));
                 } else {
-                    setUi({ isLoading: false, error: '' });
+                    setUi({isLoading: false, error: ''});
                 }
             })
-            .catch(() => setUi({ isLoading: false, error: "Failed to load question text." }));
+            .catch(() => setUi({isLoading: false, error: "Failed to load question text."}));
     }, []);
 
     // Initial Load: Get the track, and if there's an active question, load it.
@@ -51,23 +51,28 @@ const StudentGamePageTest = () => {
             return;
         }
 
-        setUi(prev => ({ ...prev, isLoading: true }));
+        setUi(prev => ({...prev, isLoading: true}));
 
-        axios.get(`${HOST}/get-track`, { params: { studentToken: token } })
+        axios.get(`${HOST}/get-track`, {params: {studentToken: token}})
             .then((res) => {
                 if (res.data.success) {
                     const t = res.data.track;
-                    setTrack({ id: t.id, score: t.score, position: t.position, pathChoice: t.path ,currentQuestionId: t.currentQuestionId});
+                    setTrack({
+                        id: t.id,
+                        score: t.score,
+                        position: t.position,
+                        pathChoice: t.path,
+                        currentQuestionId: t.currentQuestionId
+                    });
                     if (t.currentQuestionId !== -1) {
                         fetchQuestionText(t.currentQuestionId);
-                    } else {
-                        setUi({ isLoading: false, error: '' });
+                        setUi({isLoading: false, error: ''});
                     }
                 } else {
-                    setUi({ isLoading: false, error: "Could not load track data." });
+                    setUi({isLoading: false, error: "Could not load track data."});
                 }
             })
-            .catch(() => setUi({ isLoading: false, error: "Connection lost." }));
+            .catch(() => setUi({isLoading: false, error: "Connection lost."}));
     }, [token, navigate, fetchQuestionText]);
 
     // Triggers on page load
@@ -77,26 +82,26 @@ const StudentGamePageTest = () => {
 
     // Request a new question from the server
     const handleGetNewQuestion = () => {
-        setUi({ isLoading: true, error: '' });
+        setUi({isLoading: true, error: ''});
 
         axios.get(`${HOST}/getNewQuestion`, {
-            params: { studentToken: token, trackId: track.id, pathChoice: track.pathChoice }
+            params: {studentToken: token, trackId: track.id, pathChoice: track.pathChoice}
         }).then((res) => {
             if (res.data.success) {
-                setQuestion({ id: res.data.question.id, text: res.data.question.question });
-                setInteraction({ answerInput: '', result: null }); // Reset inputs
-                setUi({ isLoading: false, error: '' });
+                setQuestion({id: res.data.question.id, text: res.data.question.question});
+                setInteraction({answerInput: '', result: null}); // Reset inputs
+                setUi({isLoading: false, error: ''});
             } else {
-                setUi({ isLoading: false, error: "Could not get a new question." });
+                setUi({isLoading: false, error: "Could not get a new question."});
             }
-        }).catch(() => setUi({ isLoading: false, error: "Connection lost." }));
+        }).catch(() => setUi({isLoading: false, error: "Connection lost."}));
     };
 
     // Submit the typed answer
     const handleSubmitAnswer = () => {
         if (interaction.answerInput === '') return;
 
-        setUi({ isLoading: true, error: '' });
+        setUi({isLoading: true, error: ''});
 
         axios.get(`${HOST}/submit-answer`, {
             params: {
@@ -110,18 +115,18 @@ const StudentGamePageTest = () => {
                 const isCorrect = res.data.question.answerRight;
 
                 // Update interaction state to show the result UI
-                setInteraction(prev => ({ ...prev, result: isCorrect }));
+                setInteraction(prev => ({...prev, result: isCorrect}));
 
                 // If correct, update the local score (Server is already updated via backend)
                 if (isCorrect) {
-                    setTrack(prev => ({ ...prev, score: prev.score + 10 }));
+                    setTrack(prev => ({...prev, score: prev.score + 10}));
                 }
 
-                setUi({ isLoading: false, error: '' });
+                setUi({isLoading: false, error: ''});
             } else {
-                setUi({ isLoading: false, error: "Failed to submit answer." });
+                setUi({isLoading: false, error: "Failed to submit answer."});
             }
-        }).catch(() => setUi({ isLoading: false, error: "Connection lost." }));
+        }).catch(() => setUi({isLoading: false, error: "Connection lost."}));
     };
 
 
@@ -129,7 +134,7 @@ const StudentGamePageTest = () => {
     // 3. RENDER UI
     // ==========================================
 
-    const GOAL_SCORE = 1000;
+    const GOAL_SCORE = 100;
 
     if (ui.isLoading && track.id === 0) return <div>Loading Race...</div>;
 
@@ -140,7 +145,7 @@ const StudentGamePageTest = () => {
                 {ui.error && <p className="student-game-page__error" style={{color: 'red'}}>{ui.error}</p>}
             </header>
 
-            <main className="student-game-page__main" style={{ margin: '20px 0' }}>
+            <main className="student-game-page__main" style={{margin: '20px 0'}}>
 
                 {/* SCENARIO A: No active question */}
                 {question.id === 0 && (
@@ -156,7 +161,7 @@ const StudentGamePageTest = () => {
                 {/* SCENARIO B: Has an active question */}
                 {question.id !== 0 && (
                     <div className="student-game-page__question-card">
-                        <div style={{ fontSize: '1.2em', marginBottom: '15px' }}>
+                        <div style={{fontSize: '1.2em', marginBottom: '15px'}}>
                             <strong>Question: </strong> {question.text}
                         </div>
 
@@ -167,7 +172,7 @@ const StudentGamePageTest = () => {
                                     type="number"
                                     placeholder="Enter your answer"
                                     value={interaction.answerInput}
-                                    onChange={(e) => setInteraction(prev => ({ ...prev, answerInput: e.target.value }))}
+                                    onChange={(e) => setInteraction(prev => ({...prev, answerInput: e.target.value}))}
                                     className="student-game-page__input"
                                     disabled={ui.isLoading}
                                 />
@@ -181,7 +186,8 @@ const StudentGamePageTest = () => {
                             </div>
                         ) : (
                             /* If they DID answer, show the result and the "Next" button */
-                            <div className={`student-game-page__result ${interaction.result ? 'student-game-page__result--correct' : 'student-game-page__result--wrong'}`}>
+                            <div
+                                className={`student-game-page__result ${interaction.result ? 'student-game-page__result--correct' : 'student-game-page__result--wrong'}`}>
                                 <h3>{interaction.result ? "✅ Correct! (+10 pts)" : "❌ Incorrect"}</h3>
                                 <button
                                     onClick={handleGetNewQuestion}
