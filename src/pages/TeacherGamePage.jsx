@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import CarProgressBar from "../components/CarProgressBar.jsx";
 // Ensure you have your HOST constant imported if you use it!
 // import { HOST } from "../Constants.ts";
 
@@ -14,7 +15,7 @@ function TeacherGamePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const GOAL_SCORE = 100;
+    const GOAL_SCORE = 10;
     const HOST_URL = "http://localhost:8080/"; // Change to your HOST constant if needed
 
     // 1. Fetch the initial list of students in the race
@@ -111,6 +112,24 @@ function TeacherGamePage() {
                                     borderRadius: "8px",
                                     boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
                                 }}>
+                                    {/*<div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontWeight: "bold" }}>*/}
+                                    {/*    <span>*/}
+                                    {/*        {index === 0 && student.score > 0 ? "🥇 " : ""}*/}
+                                    {/*        {student.fullName}*/}
+                                    {/*    </span>*/}
+                                    {/*    <span>{student.score} pts</span>*/}
+                                    {/*</div>*/}
+
+                                    {/* The Progress Bar Background */}
+                                    {/*<div style={{ width: "100%", height: "20px", background: "#e0e0e0", borderRadius: "10px", overflow: "hidden" }}>*/}
+                                    {/*    /!* The Progress Bar Fill (Animates as width changes) *!/*/}
+                                    {/*    <div style={{*/}
+                                    {/*        width: `${progressPercent}%`,*/}
+                                    {/*        height: "100%",*/}
+                                    {/*        background: progressPercent >= 100 ? "#4caf50" : "#2196f3",*/}
+                                    {/*        transition: "width 0.5s ease-out, background 0.3s"*/}
+                                    {/*    }} />*/}
+                                    {/*</div>*/}
                                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontWeight: "bold" }}>
                                         <span>
                                             {index === 0 && student.score > 0 ? "🥇 " : ""}
@@ -119,16 +138,8 @@ function TeacherGamePage() {
                                         <span>{student.score} pts</span>
                                     </div>
 
-                                    {/* The Progress Bar Background */}
-                                    <div style={{ width: "100%", height: "20px", background: "#e0e0e0", borderRadius: "10px", overflow: "hidden" }}>
-                                        {/* The Progress Bar Fill (Animates as width changes) */}
-                                        <div style={{
-                                            width: `${progressPercent}%`,
-                                            height: "100%",
-                                            background: progressPercent >= 100 ? "#4caf50" : "#2196f3",
-                                            transition: "width 0.5s ease-out, background 0.3s"
-                                        }} />
-                                    </div>
+                                    {/* ===> INSERT THE REUSABLE CAR COMPONENT HERE <=== */}
+                                    <CarProgressBar score={student.score} goalScore={GOAL_SCORE} />
                                 </div>
 
                             );

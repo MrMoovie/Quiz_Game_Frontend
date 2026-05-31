@@ -4,6 +4,9 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import '../style/StudentGamePage.css';
 import { HOST } from "../Constants.js";
+import QuestionTimer from "../components/QuestionTimer.jsx";
+import QuestionDisplay from "../components/QuestionDisplay.jsx";
+
 
 const StudentGamePageTest = () => {
     const navigate = useNavigate();
@@ -13,12 +16,35 @@ const StudentGamePageTest = () => {
     const [track, setTrack] = useState({ id: 0, score: 0, pathChoice: 0 });
     const [question, setQuestion] = useState({ id: 0, text: '' });
 
+    const [timeLeft, setTimeLeft] = useState(30);
+
     const [answerInput, setAnswerInput] = useState('');
     const [result, setResult] = useState(null);
     const [showPathChoice, setShowPathChoice] = useState(false);
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (question.id === 0 || result !== null || showPathChoice) return;
+
+        setTimeLeft(30); // איפוס ל-30 שניות ברגע שמגיעה שאלה חדשה
+
+        const interval = setInterval(() => {
+            setTimeLeft((prev) => {
+                if (prev <= 0) {
+                    clearInterval(interval);
+                    handleTimeOut();
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [question.id, result, showPathChoice]);
+
+
 
     // 1. טעינת המשחק הראשונית
     const loadInitialGame = useCallback(() => {
@@ -82,8 +108,10 @@ const StudentGamePageTest = () => {
     };
 
     // 3. שליחת תשובה וניהול אופטימי של הניקוד ומסך הבחירה
-    const handleSubmitAnswer = () => {
-        if (answerInput === '') return;
+    const handleSubmitAnswer = (forcedAnswer = null) => {
+        const finalAnswer = forcedAnswer !== null ? forcedAnswer : answerInput;
+
+        if (finalAnswer === '') return;
         setIsLoading(true);
 
         axios.get(`${HOST}/submit-answer`, {
@@ -91,7 +119,7 @@ const StudentGamePageTest = () => {
                 studentToken: token,
                 trackId: track.id,
                 questionId: question.id,
-                answer: Number(answerInput)
+                answer: Number(finalAnswer)
             }
         }).then((res) => {
             if (res.data.success) {
@@ -179,6 +207,12 @@ const StudentGamePageTest = () => {
     const GOAL_SCORE = 100; // מותאם לניקוד המקסימלי האפשרי במשחק
     if (isLoading && track.id === 0) return <div>Loading Race...</div>;
 
+    const handleTimeOut = () => {
+        setError("⏰ Time is up!");
+        handleSubmitAnswer(-999); // Submits an incorrect guess automatically
+
+    };
+
     return (
         <div className="student-game-page">
             <header className="student-game-page__header">
@@ -227,12 +261,19 @@ const StudentGamePageTest = () => {
 
                         {question.id !== 0 && (
                             <div className="student-game-page__question-card">
-                                <div style={{ fontSize: '1.2em', marginBottom: '15px' }}>
-                                    <strong>Question Text: </strong> {question.text}
-                                    <span style={{ fontSize: '0.8em', marginLeft: '10px', color: '#666' }}>
-                                        (Path: {track.pathChoice === 2 ? 'Highway' : track.pathChoice === 1 ? 'Dirt Road' : 'Regular'})
-                                    </span>
-                                </div>
+
+                                {result === null && (
+                                    <QuestionTimer timeLeft={timeLeft} initialTime={5} />
+                                )}
+
+                                <QuestionDisplay text={question.text} pathChoice={track.pathChoice} />
+
+                                {/*<div style={{ fontSize: '1.2em', marginBottom: '15px' }}>*/}
+                                {/*    <strong>Question Text: </strong> {question.text}*/}
+                                {/*    <span style={{ fontSize: '0.8em', marginLeft: '10px', color: '#666' }}>*/}
+                                {/*        (Path: {track.pathChoice === 2 ? 'Highway' : track.pathChoice === 1 ? 'Dirt Road' : 'Regular'})*/}
+                                {/*    </span>*/}
+                                {/*</div>*/}
 
                                 {result === null ? (
                                     <div style={{ display: 'flex', gap: '10px' }}>
@@ -245,7 +286,7 @@ const StudentGamePageTest = () => {
                                             disabled={isLoading}
                                         />
                                         <button
-                                            onClick={handleSubmitAnswer}
+                                            onClick={()=>handleSubmitAnswer()}
                                             disabled={isLoading || answerInput === ''}
                                             className="student-game-page__btn student-game-page__btn--submit"
                                         >
