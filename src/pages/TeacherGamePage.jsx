@@ -14,7 +14,7 @@ function TeacherGamePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const GOAL_SCORE = 1000;
+    const GOAL_SCORE = 100;
     const HOST_URL = "http://localhost:8080/"; // Change to your HOST constant if needed
 
     // 1. Fetch the initial list of students in the race
@@ -36,7 +36,7 @@ function TeacherGamePage() {
                     id: s.id,
                     fullName: s.fullName,
                     score: 0,
-                    position: 0
+
                 }));
                 setStudents(initialStudents);
             } else {
@@ -130,10 +130,50 @@ function TeacherGamePage() {
                                         }} />
                                     </div>
                                 </div>
+
                             );
                         })}
+                        {/* --- טבלת סטטיסטיקת תלמידים --- */}
+                        <div style={{ marginTop: "30px" }}>
+                            <h3>📊 statistic table of the students</h3>
+                            <div style={{ overflowX: "auto" }}>
+                                <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px", textAlign: "right" }}>
+                                    <thead>
+                                    <tr style={{ backgroundColor: "#e88d8d", borderBottom: "2px solid #ddd" }}>
+                                        <th style={{ padding: "12px", border: "1px solid #ddd" }}>top</th>
+                                        <th style={{ padding: "12px", border: "1px solid #ddd" }}>userName</th>
+                                        <th style={{ padding: "12px", border: "1px solid #ddd" }}>score</th>
+                                        <th style={{ padding: "12px", border: "1px solid #ddd" }}>percent</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {students.map((student, index) => {
+                                        const completionPercent = Math.min((student.score / GOAL_SCORE) * 100, 100).toFixed(1);
+                                        return (
+                                            <tr key={student.id} style={{ borderBottom: "1px solid #ddd", background: index % 2 === 0 ? "#842727" : "#0c0808" }}>
+                                                <td style={{ padding: "12px", border: "1px solid #ddd", fontWeight: "bold" }}>
+                                                    {index + 1}
+                                                </td>
+                                                <td style={{ padding: "12px", border: "1px solid #ddd" }}>
+                                                    {student.fullName}
+                                                </td>
+                                                <td style={{ padding: "12px", border: "1px solid #ddd" }}>
+                                                    {student.score} / {GOAL_SCORE}
+                                                </td>
+                                                <td style={{ padding: "12px", border: "1px solid #ddd" }}>
+                                                    {completionPercent}%
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
+
                 )}
+
             </main>
         </div>
     );
