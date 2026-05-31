@@ -1,11 +1,145 @@
+/* Core Widescreen Wrapper Viewport matching Teacher style */
+.student-menu-page-wrapper {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    background-color: #80d4ff;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+}
+
+.student-menu-card {
+    width: 50%;
+    max-width: 900px;
+    height: 650px;
+    margin-top: auto;
+    margin-bottom: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 12px;
+    /* Glassmorphic semi-transparent background with frosted blur effect */
+    background-color: rgba(244, 247, 249, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.student-menu-container {
+    padding: 25px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Translucent Header */
 .student-menu-header {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 15px;
+    flex-shrink: 0;
 }
 
-.waiting-message {
-    background-color: #fff3cd;
-    padding: 15px;
-    text-align: center;
+.student-menu-header span {
+    font-size: 1.2rem;
+    color: #2c3e50;
+}
+
+.logout-button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+    background-color: #e04343;
+}
+
+/* Scrollable Core Body */
+.student-menu-scrollable {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 5px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Translucent Data Table */
+.races-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.races-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: rgba(44, 62, 80, 0.85);
+    color: white;
+    padding: 14px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Note: Style your individual tr elements inside RaceRow.jsx using these styles */
+.races-table tr {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    transition: background-color 0.2s;
+}
+
+.races-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.75);
+}
+
+.races-table td {
+    padding: 14px;
+    color: #2c3e50;
+}
+
+/* Frosted Glass Empty Placeholder View */
+.empty-state-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 40px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border: 1px dashed rgba(44, 62, 80, 0.3);
+    border-radius: 12px;
+    color: #2c3e50;
+    margin-top: 20px;
+}
+
+.empty-state-icon {
+    font-size: 2rem;
+    opacity: 0.8;
+}
+
+.empty-state-text {
+    text-align: left;
+}
+
+.empty-state-title {
+    font-size: 1.15rem;
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.empty-state-subtitle {
+    font-size: 0.95rem;
+    color: #5a6566;
 }

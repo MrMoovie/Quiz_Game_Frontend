@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import '../style/StudentGamePage.css';
@@ -13,7 +13,7 @@ const StudentGamePageTest = () => {
     const token = Cookies.get("token");
 
     // סטייט המשחק המרכזי
-    const [track, setTrack] = useState({ id: 0, score: 0, pathChoice: 0 });
+    const [track, setTrack] = useState({ id: 0, score: 0, pathChoice: 0, goalScore: 100 });
     const [question, setQuestion] = useState({ id: 0, text: '' });
 
     const [timeLeft, setTimeLeft] = useState(30);
@@ -24,6 +24,10 @@ const StudentGamePageTest = () => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
+
+    const {raceId} = useParams();
+
+    const goalScore = parseInt(sessionStorage.getItem(`race_goal_${raceId}`)) || 100;
 
     useEffect(() => {
         if (question.id === 0 || result !== null || showPathChoice) return;
@@ -61,7 +65,7 @@ const StudentGamePageTest = () => {
                     setTrack({
                         id: t.id || 0,
                         score: t.score || 0,
-                        pathChoice: t.path || 0
+                        pathChoice: t.path || 0,
                     });
 
                     // בדיקה בטעינה: אם השחקן ב-40 נקודות ועדיין לא בחר מסלול
@@ -85,6 +89,20 @@ const StudentGamePageTest = () => {
 
     useEffect(() => {
         loadInitialGame();
+
+        const sse = new EventSource(`${HOST}subscribe?token=${token}&raceId=${raceId}`);
+
+        sse.addEventListener("game-finished", (event) => {
+            const data = JSON.parse(event.data);
+            console.log("The race is over! Winner:", data.winnerName);
+            // Direct players to a summary page or activate a modal view
+            navigate(`/results/${raceId}`, { state: { winner: data.winnerName } });
+        });
+
+        return () => {
+            sse.close();
+        };
+
     }, [loadInitialGame]);
 
     // 2. בקשת שאלה חדשה
@@ -216,7 +234,7 @@ const StudentGamePageTest = () => {
     return (
         <div className="student-game-page">
             <header className="student-game-page__header">
-                <h2>Current Score: {track.score} / {GOAL_SCORE}</h2>
+                <h2>Current Score: {track.score} / {goalScore}</h2>
                 {error && <p className="student-game-page__error" style={{ color: 'red' }}>{error}</p>}
             </header>
 

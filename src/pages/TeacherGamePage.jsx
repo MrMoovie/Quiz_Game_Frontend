@@ -15,7 +15,7 @@ function TeacherGamePage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    const GOAL_SCORE = 10;
+    const [goalScore, setGoalScore] = useState(100);
     const HOST_URL = "http://localhost:8080/"; // Change to your HOST constant if needed
 
     // 1. Fetch the initial list of students in the race
@@ -32,6 +32,7 @@ function TeacherGamePage() {
             }
         }).then(res => {
             if (res.data.success) {
+                setGoalScore(res.data.goalScore)
                 // Initialize students with 0 score and position
                 const initialStudents = res.data.students.map(s => ({
                     id: s.id,
@@ -76,6 +77,13 @@ function TeacherGamePage() {
             });
         });
 
+        sse.addEventListener("game-finished", (event) => {
+            const data = JSON.parse(event.data);
+            console.log("The race is over! Winner:", data.winnerName);
+            // Direct players to a summary page or activate a modal view
+            navigate(`/results/${raceId}`, { state: { winner: data.winnerName } });
+        });
+
         // Clean up the connection when the teacher leaves the page
         return () => {
             console.log("Closing dashboard stream.");
@@ -91,7 +99,7 @@ function TeacherGamePage() {
         <div className="teacher-game-page" style={{ padding: "20px", maxWidth: "800px", margin: "0 auto", fontFamily: "sans-serif" }}>
             <header style={{ borderBottom: "2px solid #eee", marginBottom: "20px", paddingBottom: "10px" }}>
                 <h2>🏁 Live Race Dashboard (Race ID: {raceId})</h2>
-                <p style={{ color: "#666" }}>Students are racing to {GOAL_SCORE} points!</p>
+                <p style={{ color: "#666" }}>Students are racing to {goalScore} points!</p>
             </header>
 
             {error && <div style={{ color: "red", marginBottom: "15px" }}>{error}</div>}
@@ -103,7 +111,7 @@ function TeacherGamePage() {
                     <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
                         {students.map((student, index) => {
                             // Calculate percentage for the progress bar
-                            const progressPercent = Math.min((student.score / GOAL_SCORE) * 100, 100);
+                            const progressPercent = Math.min((student.score / goalScore) * 100, 100);
 
                             return (
                                 <div key={student.id} style={{
@@ -139,7 +147,7 @@ function TeacherGamePage() {
                                     </div>
 
                                     {/* ===> INSERT THE REUSABLE CAR COMPONENT HERE <=== */}
-                                    <CarProgressBar score={student.score} goalScore={GOAL_SCORE} />
+                                    <CarProgressBar score={student.score} goalScore={goalScore} />
                                 </div>
 
                             );
@@ -159,7 +167,7 @@ function TeacherGamePage() {
                                     </thead>
                                     <tbody>
                                     {students.map((student, index) => {
-                                        const completionPercent = Math.min((student.score / GOAL_SCORE) * 100, 100).toFixed(1);
+                                        const completionPercent = Math.min((student.score / goalScore) * 100, 100).toFixed(1);
                                         return (
                                             <tr key={student.id} style={{ borderBottom: "1px solid #ddd", background: index % 2 === 0 ? "#842727" : "#0c0808" }}>
                                                 <td style={{ padding: "12px", border: "1px solid #ddd", fontWeight: "bold" }}>
@@ -169,7 +177,7 @@ function TeacherGamePage() {
                                                     {student.fullName}
                                                 </td>
                                                 <td style={{ padding: "12px", border: "1px solid #ddd" }}>
-                                                    {student.score} / {GOAL_SCORE}
+                                                    {student.score} / {goalScore}
                                                 </td>
                                                 <td style={{ padding: "12px", border: "1px solid #ddd" }}>
                                                     {completionPercent}%

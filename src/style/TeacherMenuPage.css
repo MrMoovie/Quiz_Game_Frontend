@@ -1,3 +1,4 @@
+/* Core Widescreen Wrapper Viewport */
 .teacher-menu-page {
     height: 100vh;
     width: 100vw;
@@ -11,24 +12,30 @@
 .teacher-menu-container {
     width: 70%;
     max-width: 1400px;
-    background-color: #f4f7f9;
+    /* Glassmorphism: semi-transparent background with frosted blur effect */
+    background-color: rgba(244, 247, 249, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Header Area */
 .teacher-menu-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 40px;
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
+    /* Soft translucent background for the header navbar */
+    background-color: rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .teacher-menu-header span {
     font-weight: 600;
-    color: #333;
+    color: #2c3e50;
 }
 
 .logout-button {
@@ -41,6 +48,7 @@
     font-weight: bold;
 }
 
+/* Create Section Controls Area */
 .create-race-section {
     text-align: center;
     padding: 25px;
@@ -54,9 +62,20 @@
     border: none;
     border-radius: 30px;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    font-weight: bold;
+    transition: transform 0.1s, background-color 0.2s;
 }
 
+.create-race-button:hover {
+    background-color: #218838;
+}
+
+.create-race-button:active {
+    transform: scale(0.98);
+}
+
+/* Split-Column Main Body Framework */
 .content-area {
     display: flex;
     flex: 1;
@@ -69,29 +88,32 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    background-color: white;
+    /* Glass columns letting the background hue pass through softly */
+    background-color: rgba(255, 255, 255, 0.25);
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
 .column-header {
     padding: 15px 20px;
     margin: 0;
-    background-color: #f8f9fa;
-    color: #333;
-    border-bottom: 2px solid #eee;
+    background-color: rgba(248, 249, 250, 0.5);
+    color: #2c3e50;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .races-count {
-    color: #28a745;
+    color: #1e7e34;
     font-weight: bold;
 }
 
 .students-count {
-    color: #007bff;
+    color: #0056b3;
     font-weight: bold;
 }
 
@@ -101,26 +123,37 @@
     padding: 20px;
 }
 
+/* Individual Race & Student Row Elements */
 .race-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px;
-    border: 1px solid #f0f0f0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
     margin-bottom: 10px;
-    background-color: #fff;
+    /* Translucent item layers */
+    background-color: rgba(255, 255, 255, 0.6);
     position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.race-item:hover {
+    background-color: rgba(255, 255, 255, 0.85);
+    transform: translateY(-1px);
 }
 
 .race-details div:first-child {
     font-weight: bold;
     color: #2c3e50;
+    font-size: 1.05rem;
 }
 
 .race-details div:last-child {
     font-size: 13px;
-    color: #7f8c8d;
+    color: #5a6566;
+    margin-top: 4px;
 }
 
 .race-actions {
@@ -136,75 +169,68 @@
     padding: 8px 20px;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
 }
 
-.menu-button {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #7f8c8d;
-    padding: 0 5px;
+.start-race-button:hover {
+    background-color: #0069d9;
 }
 
-.dropdown-menu {
-    position: absolute;
-    right: 0;
-    top: 30px;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 100;
-    width: 160px;
-    overflow: hidden;
+/* Integrated Dynamic Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: bold;
+    margin-left: 8px;
+    text-transform: uppercase;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.menu-item {
-    width: 100%;
-    padding: 10px 15px;
-    text-align: left;
-    background: none;
-    border: none;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    font-size: 14px;
-    color: #333;
-    display: block;
-    transition: background 0.2s;
+.status-badge--lobby {
+    background-color: #e3f2fd;
+    color: #1565c0;
 }
 
-.menu-item:hover {
-    background-color: #f5f5f5;
+.status-badge--started {
+    background-color: #fff3e0;
+    color: #e65100;
 }
 
-.menu-item:last-child {
-    border-bottom: none;
+.status-badge--finished {
+    background-color: #e8f5e9;
+    color: #2e7d32;
 }
 
 .no-items-message {
     text-align: center;
-    color: #999;
+    color: #5a6566;
     margin-top: 40px;
+    font-style: italic;
+    font-weight: 500;
 }
 
 .student-item {
     padding: 12px 15px;
-    border-bottom: 1px solid #f1f1f1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: rgba(255, 255, 255, 0.4);
 }
 
 .student-name {
     font-weight: 500;
-    color: #34495e;
+    color: #2c3e50;
 }
 
 .student-track {
     font-size: 12px;
-    color: #95a5a6;
-    background-color: #ecf0f1;
+    color: #4a5568;
+    background-color: rgba(236, 240, 241, 0.7);
     padding: 3px 10px;
     border-radius: 15px;
+    font-weight: 600;
 }

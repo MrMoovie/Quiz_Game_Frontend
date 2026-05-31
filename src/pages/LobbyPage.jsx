@@ -6,15 +6,14 @@ import { HOST } from "../Constants.js";
 import "../style/LobbyPage.css";
 
 function LobbyPage({ user, role, entryCode }) {
-    // role should be passed as a prop from your router (e.g., role="teacher" or "student")
     const { raceId } = useParams();
     const navigate = useNavigate();
 
     const [students, setStudents] = useState([]);
     const [teacherName, setTeacherName] = useState("Loading...");
+    const [copied, setCopied] = useState(false); // Clipboard feedback tracker
     const eventSourceRef = useRef(null);
 
-    // 1. Fetch initial lobby data on mount
     useEffect(() => {
         const token = Cookies.get("token");
         if (!token) {
@@ -22,7 +21,6 @@ function LobbyPage({ user, role, entryCode }) {
             return;
         }
 
-        // Fetch the initial state of the lobby (teacher name, already joined students)
         axios.get(`${HOST}lobby-info`, { params: { token, raceId } })
             .then((res) => {
                 if (res.data.success) {
@@ -33,15 +31,12 @@ function LobbyPage({ user, role, entryCode }) {
             .catch(err => console.error("Failed to fetch lobby info", err));
     }, [raceId, navigate]);
 
-    // 2. Establish the SSE Connection securely within the LobbyPage lifecycle
     useEffect(() => {
         const token = Cookies.get("token");
         if (!token || !raceId) return;
 
-        // Subscribe specifically to THIS race
         const listener = new EventSource(`${HOST}subscribe?token=${token}&raceId=${raceId}`);
 
-        // Listen for new students joining
         listener.addEventListener("lobby-update", (event) => {
             const student = JSON.parse(event.data);
             setStudents((prev) => {
@@ -49,14 +44,12 @@ function LobbyPage({ user, role, entryCode }) {
             });
         });
 
-        // Listen for the teacher starting the game
         listener.addEventListener("game-started", () => {
             navigate(`/game/${raceId}`);
         });
 
         eventSourceRef.current = listener;
 
-        // Cleanup: Disconnect when leaving the lobby
         return () => {
             if (eventSourceRef.current) {
                 console.log("Closing SSE connection for lobby...");
@@ -66,7 +59,6 @@ function LobbyPage({ user, role, entryCode }) {
         };
     }, [raceId, navigate]);
 
-    // Teacher specific action
     const handleStartGame = () => {
         const token = Cookies.get("token");
         axios.get(`${HOST}start-race`, { params: { token, raceId } })
@@ -74,9 +66,21 @@ function LobbyPage({ user, role, entryCode }) {
                 if (!res.data.success) {
                     alert("Failed to start the game.");
                 }
-                // We don't navigate here! The SSE 'game-started' event will trigger the navigation for EVERYONE.
             })
             .catch(err => console.error("Failed to start race", err));
+    };
+
+    // Clipboard Copy Handler Action
+    const handleCopyCode = () => {
+        if (!entryCode) return;
+
+        navigator.clipboard.writeText(entryCode)
+            .then(() => {
+                setCopied(true);
+                // Flash the status text back to default after 2 seconds
+                setTimeout(() => setCopied(false), 2000);
+            })
+            .catch(err => console.error("Failed to write to clipboard:", err));
     };
 
     return (
@@ -94,7 +98,22 @@ function LobbyPage({ user, role, entryCode }) {
                 </ul>
                 {students.length === 0 && <p className="lobby-page__waiting-text">Waiting for students to join...</p>}
             </div>
-            <h1>{entryCode}</h1>
+
+            {/* Interactive Entry Code Panel Small Yellow Block */}
+            {entryCode && (
+                <div
+                    onClick={handleCopyCode}
+                    className="lobby-page__code-container"
+                    title="Click to copy code"
+                >
+                    <span className="lobby-page__code-label">ENTRY CODE</span>
+                    <h2 className="lobby-page__code-text">{entryCode}</h2>
+                    <span className={`lobby-page__copy-toast ${copied ? "visible" : ""}`}>
+                {copied ? "📋 Copied!" : "💡 Click to Copy"}
+            </span>
+                </div>
+            )}
+
             {role === "teacher" ? (
                 <button
                     onClick={handleStartGame}

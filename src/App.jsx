@@ -12,6 +12,7 @@ import StudentTestPage from './TEST/StudentTestPage.jsx'
 import './App.css'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LobbyWrapper from "./pages/LobbyWrapper.jsx";
+import ResultsPage from "./pages/ResultsPage.jsx";
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
                 <Route path={"/menu"} element={<MenuWrapper />}/>
                 <Route path={"/game/:raceId"} element={<GameWrapper />}/>
                 <Route path={"/lobby/:raceId"} element={<LobbyWrapper />}/>
+                <Route path={"/results/:raceId"} element={<ResultsPage />}/>
 
                 {/*TEST*/}
                 <Route path={"/test-tch"} element={<TeacherTestPage />}/>

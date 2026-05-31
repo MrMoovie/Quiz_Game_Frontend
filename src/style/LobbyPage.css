@@ -40,3 +40,64 @@
     font-style: italic;
 }
 
+/* --- Styled Accent Yellow Entry Code Block Container --- */
+.lobby-page__code-container {
+    background-color: #f1c40f; /* Accent website yellow */
+    border: 2px solid #d4ac0d;
+    border-radius: 12px;
+    padding: 12px 24px;
+    margin: 25px auto;
+    max-width: 240px; /* Small, tightly structured block */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 4px 10px rgba(241, 196, 15, 0.25);
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+.lobby-page__code-container:hover {
+    background-color: #f39c12; /* Darker golden yellow on focus */
+    box-shadow: 0 6px 14px rgba(241, 196, 15, 0.4);
+}
+
+.lobby-page__code-container:active {
+    transform: scale(0.97);
+}
+
+.lobby-page__code-label {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #2c3e50;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+.lobby-page__code-text {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #000000; /* Crisp, dark contrast text */
+    letter-spacing: 1.5px;
+}
+
+.lobby-page__copy-toast {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #2c3e50;
+    opacity: 0.5;
+    transition: opacity 0.2s, color 0.2s;
+}
+
+.lobby-page__code-container:hover .lobby-page__copy-toast {
+    opacity: 0.9;
+}
+
+.lobby-page__copy-toast.visible {
+    opacity: 1 !important;
+    color: #1e7d32; /* Deep distinct green for copy confirmation */
+    font-weight: bold;
+}
