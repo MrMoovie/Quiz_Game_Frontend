@@ -21,13 +21,14 @@ function LobbyPage({ user, role, entryCode }) {
             return;
         }
 
+
         axios.get(`${HOST}lobby-info`, { params: { token, raceId } })
             .then((res) => {
                 if (res.data.success) {
                     setTeacherName(res.data.teacherName);
                     setStudents(res.data.students || []);
                 }else{
-                    if(res.data.errorCode === 1003){
+                    if(res.data.errorCode === 1003 || res.data.errorCode === 1017){
                         navigate("/menu")
                     }
                 }
