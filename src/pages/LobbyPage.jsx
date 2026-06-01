@@ -26,6 +26,10 @@ function LobbyPage({ user, role, entryCode }) {
                 if (res.data.success) {
                     setTeacherName(res.data.teacherName);
                     setStudents(res.data.students || []);
+                }else{
+                    if(res.data.errorCode === 1003){
+                        navigate("/menu")
+                    }
                 }
             })
             .catch(err => console.error("Failed to fetch lobby info", err));
