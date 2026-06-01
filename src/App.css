@@ -11,7 +11,11 @@
   background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
+.card-dashboard {
+  width: 90% !important;     /* לוקח 90% מרוחב המסך הזמין */
+  max-width: 1400px !important; /* לא עובר את ה-1400 פיקסלים כדי שלא ייראה מתוח מדי */
+  min-height: 85vh !important;  /* נותן גובה פרופורציונלי למסך */
+}
 h1 {
   font-size: 2.5rem;
   margin: 0 0 15px 0;

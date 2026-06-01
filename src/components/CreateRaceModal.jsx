@@ -27,15 +27,15 @@ function CreateRaceModal({ isOpen, onClose, onSubmit, isWaiting }) {
 
                         {/* Target Victory Points Threshold */}
                         <div className="create-race-modal-field">
-                            <label>Target Goal Score:</label>
-                            <input
-                                type="number"
-                                min="10"
-                                max="1000"
-                                value={goalScore}
-                                onChange={(e) => setGoalScore(e.target.value)}
-                                required
-                            />
+                            {/*<label>Target Goal Score:</label>*/}
+                            {/*<input*/}
+                            {/*    type="number"*/}
+                            {/*    min="10"*/}
+                            {/*    max="1000"*/}
+                            {/*    value={goalScore}*/}
+                            {/*    onChange={(e) => setGoalScore(e.target.value)}*/}
+                            {/*    required*/}
+                            {/*/>*/}
                         </div>
 
                         {/* Maximum Students Joined Limit Constraint */}

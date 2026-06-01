@@ -154,7 +154,7 @@ function TeacherMenuPage() {
                                     </div>
                                 ))
                             ) : (
-                                <div className="no-items-message">No hosted races found. Create a room to get started!</div>
+                                <div className="no-items-message">No races found...</div>
                             )}
                         </div>
                     </section>

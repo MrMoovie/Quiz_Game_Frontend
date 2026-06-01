@@ -69,7 +69,11 @@ function LobbyPage({ user, role, entryCode }) {
         axios.get(`${HOST}start-race`, { params: { token, raceId } })
             .then((res) => {
                 if (!res.data.success) {
-                    alert("Failed to start the game.");
+                    if (res.data.errorCode === 1009) {
+                        alert("Wait For Students To Join.");
+                    } else {
+                        alert("Failed to start the game.");
+                    }
                 }
             })
             .catch(err => console.error("Failed to start race", err));

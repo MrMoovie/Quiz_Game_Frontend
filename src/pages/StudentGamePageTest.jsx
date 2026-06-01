@@ -222,7 +222,6 @@ const StudentGamePageTest = () => {
             .finally(() => setIsLoading(false));
     };
 
-    const GOAL_SCORE = 100; // מותאם לניקוד המקסימלי האפשרי במשחק
     if (isLoading && track.id === 0) return <div>Loading Race...</div>;
 
     const handleTimeOut = () => {
@@ -244,7 +243,7 @@ const StudentGamePageTest = () => {
                 {showPathChoice ? (
                     <div className="path-choice-section" style={{ textAlign: 'center', padding: '40px 20px', border: '3px dashed #3f51b5', borderRadius: '12px', backgroundColor: '#f9f9f9' }}>
                         <h2 style={{ color: '#3f51b5', marginBottom: '10px' }}>🌟 Choose Your Path 🌟</h2>
-                        <h3 style={{ marginBottom: '25px' }}>Select your road for the next stages:</h3>
+                        <h3 style={{ color: '#3f51b5', marginBottom: '25px' }}>Select your road for the next stages</h3>
                         <div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
                             <button
                                 onClick={() => handleChoosePath(2)}
