@@ -2,6 +2,37 @@
     padding: 40px;
     text-align: center;
     font-family: sans-serif;
+    position: relative; /* Allows back button to position absolutely inside */
+}
+
+.lobby-page__back-button {
+    position: absolute; /* Swap to 'fixed' if you are using a centered card layout */
+    top: -35px;
+    left: -35px;
+
+    background-color: #f1c40f; /* Accent website yellow */
+    border: 2px solid #d4ac0d;
+    border-radius: 12px;       /* Matches the code container corners */
+    padding: 8px 16px;
+
+    font-size: 0.9rem;
+    font-weight: 700;          /* Bolder text to match the accent theme */
+    color: #2c3e50;
+
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 4px 10px rgba(241, 196, 15, 0.25);
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+.lobby-page__back-button:hover {
+    background-color: #f39c12; /* Darker golden yellow on focus */
+    box-shadow: 0 6px 14px rgba(241, 196, 15, 0.4);
+    color: #000000;            /* Sharp contrast on hover */
+}
+
+.lobby-page__back-button:active {
+    transform: scale(0.97);    /* Tactile press effect */
 }
 
 .lobby-page__panel {

@@ -94,7 +94,11 @@ function LobbyPage({ user, role, entryCode }) {
 
     return (
         <div className="lobby-page">
-            <h1>{teacherName}'s Lobby</h1>
+            <button onClick={() => navigate(-1)} className="lobby-page__back-button">
+                ← Go Back
+            </button>
+
+            <h1>{teacherName}'s Lobby - #{raceId}</h1>
 
             <div className="lobby-page__panel">
                 <h3>Joined Students ({students.length})</h3>
